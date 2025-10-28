@@ -12,7 +12,7 @@ import model.value.IntValue;
 public record ArithmeticExpression(IExpression leftExpression, IExpression rightExpression, int operation) implements  IExpression{
 
     @Override
-    public IValue evaluate(ISymbolTable symbolTable) throws DifferentTypesExpressionError {
+    public IValue evaluate(ISymbolTable<String,IValue> symbolTable) throws DifferentTypesExpressionError {
         IValue leftValue = leftExpression.evaluate(symbolTable);
         IValue rightValue = rightExpression.evaluate(symbolTable);
         if(!(leftValue.getType() instanceof IntType) || !(rightValue.getType() instanceof IntType)){
@@ -21,28 +21,35 @@ public record ArithmeticExpression(IExpression leftExpression, IExpression right
         if(!leftValue.getType().equals(rightValue.getType())){
             throw new DifferentTypesExpressionError("Type mismatch in ArithmeticExpression");
         }
+        IntValue leftIntValue = (IntValue)leftValue;
+        IntValue rightIntValue = (IntValue)rightValue;
         if(operation == 1){
-            int resultValue = ((IntValue)leftValue).value() + ((IntValue)rightValue).value();
+            int resultValue = leftIntValue.value() + rightIntValue.value();
             return new IntValue(resultValue);
         }
         else if(operation == 2){
-            int resultValue = ((IntValue)leftValue).value() - ((IntValue)rightValue).value();
+            int resultValue = leftIntValue.value() - rightIntValue.value();
             return new IntValue(resultValue);
         }
         else if(operation == 3){
-            int resultValue = ((IntValue)leftValue).value() * ((IntValue)rightValue).value();
+            int resultValue = leftIntValue.value() * rightIntValue.value();
             return new IntValue(resultValue);
         }
         else if(operation == 4){
-            if(((IntValue)rightValue).value() == 0){
+            if(rightIntValue.value() == 0){
                 throw new DivisionByZeroError("Zero provided as denominator");
             }
-            int resultValue = ((IntValue)leftValue).value() / ((IntValue)rightValue).value();
+            int resultValue = leftIntValue.value() / rightIntValue.value();
             return new IntValue(resultValue);
         }
         else{
             throw new InvalidOperationError("Invalid operation for ArithmeticExpression");
         }
 
+    }
+
+    @Override
+    public IExpression deepCopy() {
+        return new ArithmeticExpression(leftExpression.deepCopy(), rightExpression.deepCopy(), operation);
     }
 }

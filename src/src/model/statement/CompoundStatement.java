@@ -11,6 +11,10 @@ public record CompoundStatement(IStatement statementFirst, IStatement statementS
         return state;
     }
 
+    @Override
+    public IStatement deepCopy() {
+        return new CompoundStatement(statementFirst.deepCopy(), statementSecond.deepCopy());
+    }
 
 
 }

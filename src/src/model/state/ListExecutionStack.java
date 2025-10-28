@@ -1,28 +1,29 @@
 package model.state;
 
-import model.statement.IStatement;
-
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ListExecutionStack implements IExecutionStack {
-    private final List<IStatement> statements = new LinkedList<>();
-
+public class ListExecutionStack<T> implements MyIStack<T> {
+    private final List<T> statements = new LinkedList<>();
 
     @Override
-    public void push(IStatement statement) {
+    public void push(T statement) {
         statements.addFirst(statement);
     }
 
     @Override
-    public IStatement pop() {
+    public T pop() {
         return this.statements.removeFirst();
     }
 
     @Override
     public boolean isEmpty() {
         return this.statements.isEmpty();
+    }
+
+    @Override
+    public T top() {
+        return this.statements.getFirst();
     }
 
     @Override
@@ -33,5 +34,4 @@ public class ListExecutionStack implements IExecutionStack {
     }
 }
 
-//TODO: make the interfaces for the program state ADTs use generic types
-//TODO: add the deep copy. Make the deepCopy method in all the interfaces or override the clone method from the Object class
+//TODO: add the deep copy for the program state. Make the deepCopy method in all the interfaces or override the clone method from the Object class

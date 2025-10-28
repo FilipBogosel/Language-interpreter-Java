@@ -18,4 +18,9 @@ public record VariableDeclarationStatement(IType variableType, String variableNa
         state.symbolTable().declareVariable(variableName, variableType);
         return state;
     }
+
+    @Override
+    public IStatement deepCopy() {
+        return new VariableDeclarationStatement(variableType,variableName);
+    }
 }

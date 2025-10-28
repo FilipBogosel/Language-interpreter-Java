@@ -7,7 +7,7 @@ public record IntValue(int value) implements IValue {
 
     @Override
     public IType getType() {
-        return new IntType();
+        return IntType.INSTANCE;
     }
 
     public String toString() {

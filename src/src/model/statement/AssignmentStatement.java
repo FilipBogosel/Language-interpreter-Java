@@ -5,13 +5,13 @@ import model.exception.VariableNotDefinedError;
 import model.expression.IExpression;
 import model.state.ProgramState;
 import model.state.ISymbolTable;
-
+import model.value.IValue;
 
 
 public record AssignmentStatement(String variableName, IExpression expression) implements IStatement {
     @Override
     public ProgramState execute(ProgramState state) {
-        ISymbolTable symbolTable = state.symbolTable();
+        ISymbolTable<String, IValue> symbolTable = state.symbolTable();
         if (!symbolTable.isDefined(variableName)){
             throw new VariableNotDefinedError(variableName);
         }
@@ -28,5 +28,10 @@ public record AssignmentStatement(String variableName, IExpression expression) i
 
         return state;
 
+    }
+
+    @Override
+    public IStatement deepCopy() {
+        return new AssignmentStatement(variableName, expression.deepCopy());
     }
 }

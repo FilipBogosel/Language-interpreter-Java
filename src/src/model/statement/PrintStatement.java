@@ -10,4 +10,9 @@ public record PrintStatement(IExpression expression) implements IStatement{
         state.outputList().add(value);
         return state;
     }
+
+    @Override
+    public IStatement deepCopy() {
+        return new PrintStatement(expression.deepCopy());
+    }
 }

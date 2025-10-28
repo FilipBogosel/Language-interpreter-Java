@@ -10,6 +10,11 @@ public class NoOperationStatement implements IStatement {
     }
 
     @Override
+    public IStatement deepCopy() {
+        return new NoOperationStatement();
+    }
+
+    @Override
     public String toString(){
         return "NoOperationStatement{}";
     }

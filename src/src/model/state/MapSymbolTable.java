@@ -6,7 +6,7 @@ import model.value.IValue;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MapSymbolTable implements ISymbolTable {
+public class MapSymbolTable implements ISymbolTable<String,IValue> {
     Map<String, IValue> symbolTable = new HashMap<>();
     @Override
     public void setValue(String variableName, IValue value) {
@@ -20,9 +20,9 @@ public class MapSymbolTable implements ISymbolTable {
 
     @Override
     public IType getType(String variableName) {
-        return symbolTable.get(variableName).getType();
+        IValue value = symbolTable.get(variableName);
+        return value != null ? value.getType() : null;
     }
-
     @Override
     public void declareVariable(String variableName, IType type) {
         symbolTable.put(variableName, type.getDefaultValue());

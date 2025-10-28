@@ -13,7 +13,7 @@ public record IfStatement(IExpression condition, IStatement thenStatement,
 
     @Override
     public ProgramState execute(ProgramState state) {
-        ISymbolTable symbolTable = state.symbolTable();
+        ISymbolTable<String, IValue> symbolTable = state.symbolTable();
         IValue value = condition.evaluate(symbolTable);
 
         if (!(value.getType() instanceof BooleanType)) {
@@ -30,5 +30,9 @@ public record IfStatement(IExpression condition, IStatement thenStatement,
         }
 
         return state;
+    }
+    @Override
+    public IStatement deepCopy() {
+        return new IfStatement(condition.deepCopy(), thenStatement.deepCopy(), elseStatement.deepCopy());
     }
 }
