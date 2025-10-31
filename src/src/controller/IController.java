@@ -11,5 +11,7 @@ public interface IController {
     public List<ProgramState> getAllProgramStates();
     ProgramState oneStep(ProgramState programState);
     void allSteps();
+    //this will be replaced later with writing in a text file
     void displayCurrentProgramState();
+    void toggleDisplayFlag();
 }

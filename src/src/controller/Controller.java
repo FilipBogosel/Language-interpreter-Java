@@ -9,6 +9,11 @@ import java.util.List;
 
 public class Controller implements IController{
     IRepository repository;
+    boolean displayFlag;
+    public Controller(IRepository repository) {
+        this.repository = repository;
+        this.displayFlag = false;
+    }
 
     @Override
     public void addProgramState(ProgramState programState) {
@@ -36,14 +41,27 @@ public class Controller implements IController{
     public void allSteps() {
         ProgramState currentProgramState = getCurrentProgramState();
         //maybe display program state here
+
+        if(displayFlag){
+            this.displayCurrentProgramState();
+        }
         while(!currentProgramState.executionStack().isEmpty()){
-            ProgramState nextProgramState = oneStep(currentProgramState);
             //also maybe display the program state here
+            currentProgramState = oneStep(currentProgramState);
+            if(displayFlag){
+                this.displayCurrentProgramState();
+            }
         }
     }
 
     @Override
     public void displayCurrentProgramState() {
-        //
+        IO.println("Current Program State: ");
+        IO.println(this.getCurrentProgramState());
+    }
+
+    @Override
+    public void toggleDisplayFlag() {
+        this.displayFlag = !this.displayFlag;
     }
 }
