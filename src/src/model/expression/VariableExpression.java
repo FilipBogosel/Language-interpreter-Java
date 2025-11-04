@@ -17,4 +17,8 @@ public record VariableExpression(String variableName) implements IExpression{
     public IExpression deepCopy() {
         return new VariableExpression(variableName);
     }
+    @Override
+    public String toString() {
+        return variableName;
+    }
 }

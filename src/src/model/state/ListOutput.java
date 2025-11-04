@@ -13,6 +13,15 @@ public class ListOutput<T> implements MyIList<T> {
 
     @Override
     public String toString() {
-        return "ListOut{" + "values=" + outputList + '}';
+        if (outputList.isEmpty()) {
+            return "Output: empty\n";
+        }
+
+        StringBuilder sb = new StringBuilder("Output:\n");
+        for (int i = 0; i < outputList.size(); i++) {
+            sb.append("  [").append(i).append("] ").append(outputList.get(i)).append("\n");
+        }
+        return sb.toString();
     }
+
 }

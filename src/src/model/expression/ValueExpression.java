@@ -13,4 +13,9 @@ public record ValueExpression(IValue value) implements IExpression {
     public IExpression deepCopy() {
         return new ValueExpression(value);
     }
+
+    @Override
+    public String toString() {
+        return value.toString();
+    }
 }

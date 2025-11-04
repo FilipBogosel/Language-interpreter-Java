@@ -21,7 +21,7 @@ public class View {
         System.out.println("0. Exit");
         for (int i = 0; i < examples.size(); i++) {
             // We use i+1 for a 1-based menu
-            System.out.println((i + 1) + ". Run example " + (i + 1));
+            System.out.println((i + 1) + ". Run example " + (i + 1) + ": " + examples.get(i).toString());
         }
     }
 

@@ -35,8 +35,15 @@ public class MapSymbolTable implements ISymbolTable<String,IValue> {
 
     @Override
     public String toString() {
-        return "MapSymbolTable{" +
-                "symbolTable=" + symbolTable +
-                '}';
+        if (symbolTable.isEmpty()) {
+            return "Symbol Table: empty\n";
+        }
+
+        StringBuilder sb = new StringBuilder("Symbol Table:\n");
+        symbolTable.forEach((key, value) ->
+                sb.append("  ").append(key).append(" -> ").append(value).append("\n")
+        );
+        return sb.toString();
     }
+
 }

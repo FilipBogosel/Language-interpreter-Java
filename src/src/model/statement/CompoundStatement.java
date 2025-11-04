@@ -16,5 +16,9 @@ public record CompoundStatement(IStatement statementFirst, IStatement statementS
         return new CompoundStatement(statementFirst.deepCopy(), statementSecond.deepCopy());
     }
 
+    @Override
+    public String toString() {
+        return statementFirst.toString() + "; " + statementSecond.toString();
+    }
 
 }

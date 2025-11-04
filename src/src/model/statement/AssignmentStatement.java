@@ -34,4 +34,9 @@ public record AssignmentStatement(String variableName, IExpression expression) i
     public IStatement deepCopy() {
         return new AssignmentStatement(variableName, expression.deepCopy());
     }
+
+    @Override
+    public String toString() {
+        return variableName + " = " + expression.toString();
+    }
 }

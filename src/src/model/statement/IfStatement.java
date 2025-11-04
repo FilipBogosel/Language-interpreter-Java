@@ -35,4 +35,12 @@ public record IfStatement(IExpression condition, IStatement thenStatement,
     public IStatement deepCopy() {
         return new IfStatement(condition.deepCopy(), thenStatement.deepCopy(), elseStatement.deepCopy());
     }
+
+    @Override
+    public String toString() {
+        return "if (" + condition.toString() + ") then { " +
+                thenStatement.toString() + " } else { " +
+                elseStatement.toString() + " }";
+    }
+
 }

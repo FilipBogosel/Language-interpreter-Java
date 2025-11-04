@@ -1,5 +1,7 @@
 package model.state;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,10 +30,17 @@ public class ListExecutionStack<T> implements MyIStack<T> {
 
     @Override
     public String toString() {
-        return "ListExecutionStack{" +
-                "statements=" + statements +
-                '}';
+        if (statements.isEmpty()) {
+            return "Execution Stack: empty\n";
+        }
+
+        StringBuilder sb = new StringBuilder("Execution Stack:\n");
+        List<T> reversed = new ArrayList<>(statements);
+        for (int i = 0; i < reversed.size(); i++) {
+            sb.append("  [").append(i).append("] ").append(reversed.get(i)).append("\n");
+        }
+        return sb.toString();
     }
+
 }
 
-//TODO: add the deep copy for the program state. Make the deepCopy method in all the interfaces or override the clone method from the Object class

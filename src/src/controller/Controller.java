@@ -43,12 +43,15 @@ public class Controller implements IController{
         //maybe display program state here
 
         if(displayFlag){
+            IO.println("Initial Program State: ");
             this.displayCurrentProgramState();
         }
+        int stepCount = 0;
         while(!currentProgramState.executionStack().isEmpty()){
             //also maybe display the program state here
             currentProgramState = oneStep(currentProgramState);
             if(displayFlag){
+                IO.println("Step "+ ++stepCount +": ");
                 this.displayCurrentProgramState();
             }
         }
@@ -56,7 +59,6 @@ public class Controller implements IController{
 
     @Override
     public void displayCurrentProgramState() {
-        IO.println("Current Program State: ");
         IO.println(this.getCurrentProgramState());
     }
 

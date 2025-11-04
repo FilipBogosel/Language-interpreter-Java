@@ -23,4 +23,9 @@ public record VariableDeclarationStatement(IType variableType, String variableNa
     public IStatement deepCopy() {
         return new VariableDeclarationStatement(variableType,variableName);
     }
+
+    @Override
+    public String toString() {
+        return variableType.toString() + " " + variableName;
+    }
 }

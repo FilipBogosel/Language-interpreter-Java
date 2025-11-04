@@ -38,5 +38,20 @@ public record LogicalExpression(IExpression leftExpression, IExpression rightExp
     public IExpression deepCopy() {
         return new LogicalExpression(leftExpression.deepCopy(), rightExpression.deepCopy(), operation);
     }
+
+    @Override
+    public String toString() {
+        String op;
+        if(operation == 1){
+            op = "&&";
+        }
+        else if(operation == 2){
+            op = "||";
+        }
+        else{
+            op = "??";
+        }
+        return "(" + leftExpression.toString() + " " + op + " " + rightExpression.toString() + ")";
+    }
 }
 

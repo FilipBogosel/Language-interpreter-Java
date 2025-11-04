@@ -16,7 +16,7 @@ public class NoOperationStatement implements IStatement {
 
     @Override
     public String toString(){
-        return "NoOperationStatement{}";
+        return "NoOperationStatement";
     }
 
 

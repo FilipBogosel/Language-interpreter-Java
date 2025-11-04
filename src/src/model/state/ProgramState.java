@@ -19,10 +19,11 @@ public record ProgramState(ISymbolTable<String, IValue> symbolTable, MyIStack<IS
 
     @Override
     public String toString() {
-        return "ProgramState{" +
-                "symbolTable=" + symbolTable +
-                ", executionStack=" + executionStack +
-                ", outputList=" + outputList +
-                '}';
+        return "=== Program State ===\n" +
+                executionStack.toString() + "\n" +
+                symbolTable.toString() + "\n" +
+                outputList.toString() +
+                "====================\n";
     }
+
 }
