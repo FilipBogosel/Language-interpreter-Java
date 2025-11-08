@@ -5,6 +5,7 @@ import model.state.ProgramState;
 import model.statement.IStatement;
 import repository.IRepository;
 
+import java.io.IOException;
 import java.util.List;
 
 public class Controller implements IController{
@@ -38,21 +39,19 @@ public class Controller implements IController{
     }
 
     @Override
-    public void allSteps() {
+    public void allSteps() throws IOException {
         ProgramState currentProgramState = getCurrentProgramState();
         //maybe display program state here
 
         if(displayFlag){
-            IO.println("Initial Program State: ");
-            this.displayCurrentProgramState();
+            this.repository.logProgramStateExecution();
         }
         int stepCount = 0;
         while(!currentProgramState.executionStack().isEmpty()){
             //also maybe display the program state here
             currentProgramState = oneStep(currentProgramState);
             if(displayFlag){
-                IO.println("Step "+ ++stepCount +": ");
-                this.displayCurrentProgramState();
+                this.repository.logProgramStateExecution();
             }
         }
     }

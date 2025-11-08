@@ -26,6 +26,6 @@ public record VariableDeclarationStatement(IType variableType, String variableNa
 
     @Override
     public String toString() {
-        return variableType.toString() + " " + variableName;
+        return variableType + " " + variableName;
     }
 }

@@ -6,6 +6,7 @@ import model.statement.IStatement;
 import repository.IRepository;
 import repository.Repository;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -55,7 +56,7 @@ public class View {
         }
     }
 
-    private void runProgram(IStatement program) {
+    private void runProgram(IStatement program) throws IOException {
 
         // 1. Create the data structures
         MyIStack<IStatement> exeStack = new ListExecutionStack<>();
@@ -66,7 +67,7 @@ public class View {
         ProgramState programState = new ProgramState(symTable, exeStack, outputList, program);
 
 
-        IRepository repository = new Repository();
+        IRepository repository = new Repository("log.txt");
         Controller controller = new Controller(repository);
 
         controller.addProgramState(programState);

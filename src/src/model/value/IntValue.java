@@ -9,7 +9,7 @@ public record IntValue(int value) implements IValue {
     public IType getType() {
         return IntType.INSTANCE;
     }
-
+    @Override
     public String toString() {
         return ("" + value);
     }

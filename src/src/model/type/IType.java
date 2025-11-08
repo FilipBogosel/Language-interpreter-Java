@@ -4,6 +4,5 @@ import model.value.IValue;
 
 public interface IType {
     boolean equals(Object obj);
-    String toString();
     IValue getDefaultValue();
 }

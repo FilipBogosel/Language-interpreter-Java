@@ -18,7 +18,7 @@ public record CompoundStatement(IStatement statementFirst, IStatement statementS
 
     @Override
     public String toString() {
-        return statementFirst.toString() + "; " + statementSecond.toString();
+        return statementFirst + "; " + statementSecond;
     }
 
 }

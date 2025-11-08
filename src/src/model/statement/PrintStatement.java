@@ -18,7 +18,7 @@ public record PrintStatement(IExpression expression) implements IStatement{
 
     @Override
     public String toString() {
-        return "print(" + expression.toString() + ")";
+        return "print(" + expression + ")";
     }
 
 }

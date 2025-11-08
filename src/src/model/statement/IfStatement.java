@@ -38,9 +38,9 @@ public record IfStatement(IExpression condition, IStatement thenStatement,
 
     @Override
     public String toString() {
-        return "if (" + condition.toString() + ") then { " +
-                thenStatement.toString() + " } else { " +
-                elseStatement.toString() + " }";
+        return "if (" + condition + ") then { " +
+                thenStatement + " } else { " +
+                elseStatement + " }";
     }
 
 }

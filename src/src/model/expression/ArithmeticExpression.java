@@ -71,6 +71,6 @@ public record ArithmeticExpression(IExpression leftExpression, IExpression right
         else{
             op = "??";
         }
-        return "(" + leftExpression.toString() + " " + op + " " + rightExpression.toString() + ")";
+        return "(" + leftExpression + " " + op + " " + rightExpression + ")";
     }
 }

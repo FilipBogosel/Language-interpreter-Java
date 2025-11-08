@@ -51,7 +51,7 @@ public record LogicalExpression(IExpression leftExpression, IExpression rightExp
         else{
             op = "??";
         }
-        return "(" + leftExpression.toString() + " " + op + " " + rightExpression.toString() + ")";
+        return "(" + leftExpression + " " + op + " " + rightExpression + ")";
     }
 }
 

@@ -37,6 +37,6 @@ public record AssignmentStatement(String variableName, IExpression expression) i
 
     @Override
     public String toString() {
-        return variableName + " = " + expression.toString();
+        return variableName + " = " + expression;
     }
 }
