@@ -1,0 +1,45 @@
+package model.statement;
+
+import model.exception.CloseNonOpenedFileError;
+import model.exception.DifferentTypesExpressionError;
+import model.expression.IExpression;
+import model.state.ProgramState;
+import model.type.StringType;
+import model.value.IValue;
+import model.value.StringValue;
+import java.io.BufferedReader;
+
+
+public record CloseReadFileStatement(IExpression expr) implements IStatement {
+    @Override
+    public ProgramState execute(ProgramState state) {
+
+        IValue val = expr.evaluate(state.symbolTable());
+        if(!StringType.INSTANCE.equals(val.getType())) {
+            throw new DifferentTypesExpressionError("Open read file statement must have as parameter a String value as result of expression");
+        }
+        StringValue strVal = (StringValue) val;
+        if(!state.fileTable().isDefined(strVal.value())){
+            throw new CloseNonOpenedFileError("File not opened: " + val);
+        }
+        try{
+            BufferedReader br = state.fileTable().getFilePointer(strVal.value());
+            br.close();
+            state.fileTable().closeFile(strVal.value());
+        }
+        catch(Exception e){
+            throw new CloseNonOpenedFileError("File not opened: " + val);
+        }
+        return state;
+    }
+
+    @Override
+    public IStatement deepCopy() {
+        return new CloseReadFileStatement(expr.deepCopy());
+    }
+
+    @Override
+    public String toString(){
+        return "close file(" + expr.toString() + ")";
+    }
+}

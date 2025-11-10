@@ -10,9 +10,7 @@ import model.value.IValue;
 import model.value.IntValue;
 import model.value.StringValue;
 
-import java.io.IOException;
-
-public record readFileStatement(IExpression expression, String variableName) implements IStatement {
+public record ReadFileStatement(IExpression expression, String variableName) implements IStatement {
     @Override
     public ProgramState execute(ProgramState state)  {
         IValue val = expression.evaluate(state.symbolTable());
@@ -42,6 +40,11 @@ public record readFileStatement(IExpression expression, String variableName) imp
 
     @Override
     public IStatement deepCopy() {
-        return new readFileStatement(expression.deepCopy(), variableName);
+        return new ReadFileStatement(expression.deepCopy(), variableName);
+    }
+
+    @Override
+    public String toString(){
+        return "read file(" + expression.toString() + ", " + variableName + ")";
     }
 }

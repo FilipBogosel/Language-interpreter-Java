@@ -4,12 +4,12 @@ import model.statement.IStatement;
 import model.value.IValue;
 
 public record ProgramState(ISymbolTable<String, IValue> symbolTable, MyIStack<IStatement> executionStack,
-                           MyIList<IValue> outputList, IStatement originalProgram, MapFileTable fileTable) {
+                           MyIList<IValue> outputList, IStatement originalProgram, IFileTable fileTable) {
     public ProgramState(ISymbolTable<String, IValue> symbolTable,
                         MyIStack<IStatement> executionStack,
                         MyIList<IValue> outputList,
                         IStatement originalProgram,
-                        MapFileTable fileTable) {
+                        IFileTable fileTable) {
         this.symbolTable = symbolTable;
         this.executionStack = executionStack;
         this.outputList = outputList;

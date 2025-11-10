@@ -4,22 +4,63 @@ import model.state.*;
 import model.statement.*;
 import model.type.BooleanType;
 import model.type.IntType;
+import model.type.StringType;
 import model.value.BooleanValue;
 import model.value.IntValue;
-import view.View;
-
+import model.value.StringValue;
+import controller.*;
+import repository.*;
 import java.util.ArrayList;
 import java.util.List;
+import view.*;
 
 public class Main {
 
-     static void main() {
-        // Build the list of hardcoded example statements
-        List<IStatement> examples = getHardcodedExamples();
+     static void main(String[] args) {
 
-        // The View will manage the menu and program selection
-        View view = new View(examples);
-        view.runMenu();
+        // Get all hardcoded example statements
+        List<IStatement> allExamples = getHardcodedExamples();
+
+        // Create the menu
+        TextMenu menu = new TextMenu();
+        menu.addCommand(new ExitCommand("0", "Exit"));
+
+        // Create a dedicated Controller and Repository for EACH example
+        int exampleNumber = 1;
+        for (IStatement statement : allExamples) {
+            try {
+                ProgramState programState = createProgramState(statement);
+
+                String logFilePath = "log" + exampleNumber + ".txt";
+                IRepository repository = new Repository(logFilePath);
+                repository.addProgramState(programState);
+
+                IController controller = new Controller(repository);
+                controller.toggleDisplayFlag();
+
+                menu.addCommand(new RunExampleCommand(
+                        String.valueOf(exampleNumber),
+                        statement.toString(),
+                        controller
+                ));
+            } catch (Exception e) {
+                System.err.println("Error initializing example: " + statement.toString());
+                System.err.println(e.getMessage());
+            }
+            exampleNumber++;
+        }
+
+        menu.show();
+    }
+
+    private static ProgramState createProgramState(IStatement statement) {
+        // Create fresh ADTs for the new ProgramState
+        MyIStack<IStatement> executionStack = new ListExecutionStack<>();
+        ISymbolTable<String, model.value.IValue> symbolTable = new MapSymbolTable();
+        MyIList<model.value.IValue> outputList = new ListOutput<>();
+        IFileTable fileTable = new MapFileTable();
+
+        return new ProgramState(symbolTable, executionStack, outputList,statement, fileTable);
     }
 
     /**
@@ -92,6 +133,33 @@ public class Main {
                 )
         );
         examples.add(ex3);
+
+        IStatement ex4 = new CompoundStatement(
+                new VariableDeclarationStatement(StringType.INSTANCE, "varf"),
+                new CompoundStatement(
+                        new AssignmentStatement("varf", new ValueExpression(new StringValue("test.in"))),
+                        new CompoundStatement(
+                                new OpenReadFileStatement(new VariableExpression("varf")),
+                                new CompoundStatement(
+                                        new VariableDeclarationStatement(IntType.INSTANCE, "varc"),
+                                        new CompoundStatement(
+                                                new ReadFileStatement(new VariableExpression("varf"), "varc"),
+                                                new CompoundStatement(
+                                                        new PrintStatement(new VariableExpression("varc")),
+                                                        new CompoundStatement(
+                                                                new ReadFileStatement(new VariableExpression("varf"), "varc"),
+                                                                new CompoundStatement(
+                                                                        new PrintStatement(new VariableExpression("varc")),
+                                                                        new CloseReadFileStatement(new VariableExpression("varf"))
+                                                                )
+                                                        )
+                                                )
+                                        )
+                                )
+                        )
+                )
+        );
+        examples.add(ex4);
 
         // Return the list of all examples
         return examples;

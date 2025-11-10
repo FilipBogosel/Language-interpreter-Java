@@ -23,6 +23,9 @@ public class Repository implements IRepository{
     }
     @Override
     public ProgramState getCurrentProgramState() {
+        if(programStates.isEmpty()){
+            return null;
+        }
         return programStates.getLast();
     }
 

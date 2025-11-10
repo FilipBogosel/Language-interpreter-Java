@@ -4,8 +4,7 @@ import model.exception.DifferentTypesExpressionError;
 import model.exception.FileAlreadyOpenedError;
 import model.exception.OpenFileError;
 import model.expression.IExpression;
-import model.state.MapFileTable;
-import model.state.MapSymbolTable;
+import model.state.IFileTable;
 import model.state.ProgramState;
 import model.type.StringType;
 import model.value.IValue;
@@ -14,10 +13,10 @@ import model.value.StringValue;
 import java.io.BufferedReader;
 import java.io.FileReader;
 
-public record openReadFileStatement(IExpression expression) implements IStatement {
+public record OpenReadFileStatement(IExpression expression) implements IStatement {
     @Override
     public ProgramState execute(ProgramState state) {
-        MapFileTable fileTable = state.fileTable();
+        IFileTable fileTable = state.fileTable();
         IValue val = expression.evaluate(state.symbolTable());
         if(!StringType.INSTANCE.equals(val.getType())) {
             throw new DifferentTypesExpressionError("Open read file statement must have as parameter a String value as result of expression");
@@ -41,7 +40,7 @@ public record openReadFileStatement(IExpression expression) implements IStatemen
 
     @Override
     public IStatement deepCopy() {
-        return new openReadFileStatement(expression.deepCopy());
+        return new OpenReadFileStatement(expression.deepCopy());
     }
 
     @Override
