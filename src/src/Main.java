@@ -114,7 +114,6 @@ public class Main {
 
 
         // Example 3: bool a; int v; a=true; (If a Then v=2 Else v=3); Print(v)
-        // From [cite: 395-398]
         IStatement ex3 = new CompoundStatement(
                 new VariableDeclarationStatement(BooleanType.INSTANCE, "a"),
                 new CompoundStatement(
