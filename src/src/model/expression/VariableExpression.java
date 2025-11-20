@@ -1,12 +1,13 @@
 package model.expression;
 
 import model.exception.VariableNotDefinedError;
+import model.state.IHeapTable;
 import model.state.ISymbolTable;
 import model.value.IValue;
 
 public record VariableExpression(String variableName) implements IExpression{
     @Override
-    public IValue evaluate(ISymbolTable<String,IValue> symbolTable) throws VariableNotDefinedError {
+    public IValue evaluate(ISymbolTable<String,IValue> symbolTable, IHeapTable heapTable) throws VariableNotDefinedError {
         if(!symbolTable.isDefined(variableName)){
             throw new VariableNotDefinedError(variableName);
         }

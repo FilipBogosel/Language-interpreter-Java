@@ -2,6 +2,7 @@ package model.expression;
 
 import model.exception.DifferentTypesExpressionError;
 import model.exception.InvalidOperationError;
+import model.state.IHeapTable;
 import model.state.ISymbolTable;
 import model.type.IntType;
 import model.value.IValue;
@@ -12,10 +13,10 @@ public record RelationalExpression(IExpression leftExpression, IExpression right
                                    int operator) implements IExpression {
 
     @Override
-    public IValue evaluate(ISymbolTable<String, IValue> symbolTable) {
+    public IValue evaluate(ISymbolTable<String, IValue> symbolTable, IHeapTable heapTable) {
 
-        IValue leftValue = leftExpression.evaluate(symbolTable);
-        IValue rightValue = rightExpression.evaluate(symbolTable);
+        IValue leftValue = leftExpression.evaluate(symbolTable, heapTable);
+        IValue rightValue = rightExpression.evaluate(symbolTable, heapTable);
         if (!(leftValue.getType() instanceof IntType) || !(rightValue.getType() instanceof IntType)) {
             throw new DifferentTypesExpressionError("Needed integer type for relational expression");
         }

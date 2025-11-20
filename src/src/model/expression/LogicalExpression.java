@@ -2,6 +2,7 @@ package model.expression;
 
 import model.exception.DifferentTypesExpressionError;
 import model.exception.InvalidOperationError;
+import model.state.IHeapTable;
 import model.state.ISymbolTable;
 import model.type.BooleanType;
 import model.value.BooleanValue;
@@ -10,9 +11,9 @@ import model.value.IValue;
 
 public record LogicalExpression(IExpression leftExpression, IExpression rightExpression, int operation) implements IExpression{
     @Override
-    public IValue evaluate(ISymbolTable<String,IValue> symbolTable) {
-        IValue leftValue = leftExpression.evaluate(symbolTable);
-        IValue rightValue = rightExpression.evaluate(symbolTable);
+    public IValue evaluate(ISymbolTable<String,IValue> symbolTable, IHeapTable heapTable) {
+        IValue leftValue = leftExpression.evaluate(symbolTable, heapTable);
+        IValue rightValue = rightExpression.evaluate(symbolTable, heapTable);
         if(!(leftValue.getType() instanceof BooleanType) || !(rightValue.getType() instanceof BooleanType)){
             throw new DifferentTypesExpressionError("Needed boolean type for logical expression");
         }

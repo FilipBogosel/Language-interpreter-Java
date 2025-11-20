@@ -59,8 +59,9 @@ public class Main {
         ISymbolTable<String, model.value.IValue> symbolTable = new MapSymbolTable();
         MyIList<model.value.IValue> outputList = new ListOutput<>();
         IFileTable fileTable = new MapFileTable();
+        IHeapTable heapTable = new MapHeapTable();
 
-        return new ProgramState(symbolTable, executionStack, outputList,statement, fileTable);
+        return new ProgramState(symbolTable, executionStack, outputList,fileTable, heapTable, statement);
     }
 
     /**

@@ -4,6 +4,7 @@ package model.expression;
 import model.exception.DifferentTypesExpressionError;
 import model.exception.DivisionByZeroError;
 import model.exception.InvalidOperationError;
+import model.state.IHeapTable;
 import model.state.ISymbolTable;
 import model.type.IntType;
 import model.value.IValue;
@@ -12,9 +13,9 @@ import model.value.IntValue;
 public record ArithmeticExpression(IExpression leftExpression, IExpression rightExpression, int operation) implements  IExpression{
 
     @Override
-    public IValue evaluate(ISymbolTable<String,IValue> symbolTable) throws DifferentTypesExpressionError {
-        IValue leftValue = leftExpression.evaluate(symbolTable);
-        IValue rightValue = rightExpression.evaluate(symbolTable);
+    public IValue evaluate(ISymbolTable<String,IValue> symbolTable, IHeapTable heapTable) throws DifferentTypesExpressionError {
+        IValue leftValue = leftExpression.evaluate(symbolTable,heapTable);
+        IValue rightValue = rightExpression.evaluate(symbolTable,heapTable);
         if(!(leftValue.getType() instanceof IntType) || !(rightValue.getType() instanceof IntType)){
             throw new DifferentTypesExpressionError("Needed integer type for arithmetic expression");
         }

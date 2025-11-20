@@ -1,11 +1,12 @@
 package model.expression;
 
+import model.state.IHeapTable;
 import model.state.ISymbolTable;
 import model.value.IValue;
 
 public record ValueExpression(IValue value) implements IExpression {
     @Override
-    public IValue evaluate(ISymbolTable<String,IValue> symbolTable) {
+    public IValue evaluate(ISymbolTable<String,IValue> symbolTable, IHeapTable heapTable) {
         return this.value;
     }
 
