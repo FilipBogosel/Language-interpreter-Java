@@ -29,6 +29,12 @@ public class MapSymbolTable implements ISymbolTable<String,IValue> {
     }
 
     @Override
+    public Map<String, IValue> getContent() {
+        return new HashMap<>(symbolTable);
+    }
+
+
+    @Override
     public IValue getValue(String variableName) {
         return symbolTable.get(variableName);
     }

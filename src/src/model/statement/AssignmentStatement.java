@@ -16,7 +16,7 @@ public record AssignmentStatement(String variableName, IExpression expression) i
             throw new VariableNotDefinedError(variableName);
         }
 
-        var value = expression.evaluate(symbolTable);
+        var value = expression.evaluate(symbolTable, state.heapTable());
         var variableType = symbolTable.getType(variableName);
         var valueType = value.getType();
 

@@ -14,7 +14,7 @@ public record CloseReadFileStatement(IExpression expr) implements IStatement {
     @Override
     public ProgramState execute(ProgramState state) {
 
-        IValue val = expr.evaluate(state.symbolTable());
+        IValue val = expr.evaluate(state.symbolTable(), state.heapTable());
         if(!StringType.INSTANCE.equals(val.getType())) {
             throw new DifferentTypesExpressionError("Open read file statement must have as parameter a String value as result of expression");
         }

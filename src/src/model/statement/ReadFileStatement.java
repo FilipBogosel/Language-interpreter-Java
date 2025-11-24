@@ -13,7 +13,7 @@ import model.value.StringValue;
 public record ReadFileStatement(IExpression expression, String variableName) implements IStatement {
     @Override
     public ProgramState execute(ProgramState state)  {
-        IValue val = expression.evaluate(state.symbolTable());
+        IValue val = expression.evaluate(state.symbolTable(), state.heapTable());
         if(!StringType.INSTANCE.equals(val.getType())) {
             throw new DifferentTypesExpressionError("Read file statement must have as parameter a String value as result of expression");
         }

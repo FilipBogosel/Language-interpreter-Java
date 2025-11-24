@@ -6,7 +6,7 @@ import model.state.ProgramState;
 public record PrintStatement(IExpression expression) implements IStatement{
     @Override
     public ProgramState execute(ProgramState state) {
-        var value = expression.evaluate(state.symbolTable());
+        var value = expression.evaluate(state.symbolTable(), state.heapTable());
         state.outputList().add(value);
         return state;
     }

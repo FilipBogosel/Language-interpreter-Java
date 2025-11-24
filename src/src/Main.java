@@ -4,6 +4,7 @@ import model.state.*;
 import model.statement.*;
 import model.type.BooleanType;
 import model.type.IntType;
+import model.type.RefType;
 import model.type.StringType;
 import model.value.BooleanValue;
 import model.value.IntValue;
@@ -16,7 +17,7 @@ import view.*;
 
 public class Main {
 
-     static void main(String[] args) {
+     static void main() {
 
         // Get all hardcoded example statements
         List<IStatement> allExamples = getHardcodedExamples();
@@ -95,7 +96,7 @@ public class Main {
                                                         new ValueExpression(new IntValue(5)),
                                                         3 // 3 = '*'
                                                 ),
-                                                1
+                                                1 // 1 = '+'
                                         )
                                 ),
                                 new CompoundStatement(
@@ -103,7 +104,7 @@ public class Main {
                                                 new ArithmeticExpression(
                                                         new VariableExpression("a"),
                                                         new ValueExpression(new IntValue(1)),
-                                                        1
+                                                        1 // 1 = '+'
                                                 )
                                         ),
                                         new PrintStatement(new VariableExpression("b"))
@@ -134,6 +135,7 @@ public class Main {
         );
         examples.add(ex3);
 
+        // Example 4: string varf; varf="test.in"; openRFile(varf); int varc; readFile(varf,varc); print(varc); readFile(varf,varc); print(varc); closeRFile(varf)
         IStatement ex4 = new CompoundStatement(
                 new VariableDeclarationStatement(StringType.INSTANCE, "varf"),
                 new CompoundStatement(
@@ -160,6 +162,116 @@ public class Main {
                 )
         );
         examples.add(ex4);
+
+        // Example 5: Ref int v; new(v,20); Ref Ref int a; new(a,v); print(v); print(a)
+        IStatement ex5 = new CompoundStatement(
+                new VariableDeclarationStatement(new RefType(IntType.INSTANCE), "v"),
+                new CompoundStatement(
+                        new HeapAllocationStatement("v", new ValueExpression(new IntValue(20))),
+                        new CompoundStatement(
+                                new VariableDeclarationStatement(new RefType(new RefType(IntType.INSTANCE)), "a"),
+                                new CompoundStatement(
+                                        new HeapAllocationStatement("a", new VariableExpression("v")),
+                                        new CompoundStatement(
+                                                new PrintStatement(new VariableExpression("v")),
+                                                new PrintStatement(new VariableExpression("a"))
+                                        )
+                                )
+                        )
+                )
+        );
+        examples.add(ex5);
+
+        // Example 6: Ref int v; new(v,20); Ref Ref int a; new(a,v); print(rH(v)); print(rH(rH(a))+5)
+        IStatement ex6 = new CompoundStatement(
+                new VariableDeclarationStatement(new RefType(IntType.INSTANCE), "v"),
+                new CompoundStatement(
+                        new HeapAllocationStatement("v", new ValueExpression(new IntValue(20))),
+                        new CompoundStatement(
+                                new VariableDeclarationStatement(new RefType(new RefType(IntType.INSTANCE)), "a"),
+                                new CompoundStatement(
+                                        new HeapAllocationStatement("a", new VariableExpression("v")),
+                                        new CompoundStatement(
+                                                new PrintStatement(new ReadHeapExpression(new VariableExpression("v"))),
+                                                new PrintStatement(
+                                                        new ArithmeticExpression(
+                                                                new ReadHeapExpression(new ReadHeapExpression(new VariableExpression("a"))),
+                                                                new ValueExpression(new IntValue(5)),
+                                                                1 // 1 = '+'
+                                                        )
+                                                )
+                                        )
+                                )
+                        )
+                )
+        );
+        examples.add(ex6);
+
+        // Example 7: Ref int v; new(v,20); print(rH(v)); wH(v,30); print(rH(v)+5);
+        IStatement ex7 = new CompoundStatement(
+                new VariableDeclarationStatement(new RefType(IntType.INSTANCE), "v"),
+                new CompoundStatement(
+                        new HeapAllocationStatement("v", new ValueExpression(new IntValue(20))),
+                        new CompoundStatement(
+                                new PrintStatement(new ReadHeapExpression(new VariableExpression("v"))),
+                                new CompoundStatement(
+                                        new HeapWriteStatement("v", new ValueExpression(new IntValue(30))),
+                                        new PrintStatement(
+                                                new ArithmeticExpression(
+                                                        new ReadHeapExpression(new VariableExpression("v")),
+                                                        new ValueExpression(new IntValue(5)),
+                                                        1 // 1 = '+'
+                                                )
+                                        )
+                                )
+                        )
+                )
+        );
+        examples.add(ex7);
+
+        // Example 8: Ref int v; new(v,20); Ref Ref int a; new(a,v); new(v,30); print(rH(rH(a)))
+        IStatement ex8 = new CompoundStatement(
+                new VariableDeclarationStatement(new RefType(IntType.INSTANCE), "v"),
+                new CompoundStatement(
+                        new HeapAllocationStatement("v", new ValueExpression(new IntValue(20))),
+                        new CompoundStatement(
+                                new VariableDeclarationStatement(new RefType(new RefType(IntType.INSTANCE)), "a"),
+                                new CompoundStatement(
+                                        new HeapAllocationStatement("a", new VariableExpression("v")),
+                                        new CompoundStatement(
+                                                new HeapAllocationStatement("v", new ValueExpression(new IntValue(30))),
+                                                new PrintStatement(new ReadHeapExpression(new ReadHeapExpression(new VariableExpression("a"))))
+                                        )
+                                )
+                        )
+                )
+        );
+        examples.add(ex8);
+
+        // Example 9: int v; v=4; (while (v>0) print(v);v=v-1);print(v)
+        IStatement ex9 = new CompoundStatement(
+                new VariableDeclarationStatement(IntType.INSTANCE, "v"),
+                new CompoundStatement(
+                        new AssignmentStatement("v", new ValueExpression(new IntValue(4))),
+                        new CompoundStatement(
+                                new WhileStatement(
+                                        new RelationalExpression(new VariableExpression("v"), new ValueExpression(new IntValue(0)), 5), // 5 = '>'
+                                        new CompoundStatement(
+                                                new PrintStatement(new VariableExpression("v")),
+                                                new AssignmentStatement("v",
+                                                        new ArithmeticExpression(
+                                                                new VariableExpression("v"),
+                                                                new ValueExpression(new IntValue(1)),
+                                                                2 // 2 = '-'
+                                                        )
+                                                )
+                                        )
+                                ),
+                                new PrintStatement(new VariableExpression("v"))
+                        )
+                )
+        );
+        examples.add(ex9);
 
         // Return the list of all examples
         return examples;

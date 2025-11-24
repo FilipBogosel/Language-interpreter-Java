@@ -12,6 +12,7 @@ public interface IHeapTable {
     void free(int address);
     Map<Integer, IValue> getContent();
     void setContent(Map<Integer, IValue> content);
+    boolean isDefined(int address);
 
 
 }

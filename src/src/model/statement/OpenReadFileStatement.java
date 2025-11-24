@@ -17,7 +17,7 @@ public record OpenReadFileStatement(IExpression expression) implements IStatemen
     @Override
     public ProgramState execute(ProgramState state) {
         IFileTable fileTable = state.fileTable();
-        IValue val = expression.evaluate(state.symbolTable());
+        IValue val = expression.evaluate(state.symbolTable(), state.heapTable());
         if(!StringType.INSTANCE.equals(val.getType())) {
             throw new DifferentTypesExpressionError("Open read file statement must have as parameter a String value as result of expression");
         }

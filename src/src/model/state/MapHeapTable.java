@@ -12,7 +12,7 @@ public class MapHeapTable implements IHeapTable{
     @Override
     public int allocate(IValue value) {
         this.heapTable.put(nextFreeAddress, value);
-        return nextFreeAddress++;
+        return ++nextFreeAddress;
     }
 
     @Override
@@ -40,6 +40,12 @@ public class MapHeapTable implements IHeapTable{
         this.heapTable.clear();
         this.heapTable.putAll(content);
     }
+
+    @Override
+    public boolean isDefined(int address) {
+        return this.heapTable.containsKey(address);
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("Heap Table:\n");

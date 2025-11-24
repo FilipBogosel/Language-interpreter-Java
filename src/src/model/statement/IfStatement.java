@@ -14,7 +14,7 @@ public record IfStatement(IExpression condition, IStatement thenStatement,
     @Override
     public ProgramState execute(ProgramState state) {
         ISymbolTable<String, IValue> symbolTable = state.symbolTable();
-        IValue value = condition.evaluate(symbolTable);
+        IValue value = condition.evaluate(symbolTable, state.heapTable());
 
         if (!(value.getType() instanceof BooleanType)) {
             throw new RuntimeException("If statement only accepts boolean types");
