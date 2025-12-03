@@ -26,7 +26,7 @@ public record HeapAllocationStatement(String variableName, IExpression expressio
         }
         int address = state.heapTable().allocate(value);
         state.symbolTable().setValue(variableName, new RefValue(address, innerType));
-        return state;
+        return null;
     }
 
     @Override

@@ -61,8 +61,9 @@ public class Main {
         MyIList<model.value.IValue> outputList = new ListOutput<>();
         IFileTable fileTable = new MapFileTable();
         IHeapTable heapTable = new MapHeapTable();
+        int id = ProgramState.getAndIncrementLastId();
 
-        return new ProgramState(symbolTable, executionStack, outputList,fileTable, heapTable, statement);
+        return new ProgramState(symbolTable, executionStack, outputList,fileTable, heapTable, statement,id);
     }
 
     /**

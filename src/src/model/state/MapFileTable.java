@@ -4,9 +4,10 @@ import model.exception.CloseNonOpenedFileError;
 import java.io.BufferedReader;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MapFileTable implements IFileTable {
-    Map<String,BufferedReader> fileTable = new HashMap<>();
+    Map<String,BufferedReader> fileTable = new ConcurrentHashMap<>();
 
     @Override
     public void openFile(String variableName, BufferedReader reader) {

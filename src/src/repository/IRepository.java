@@ -9,5 +9,7 @@ public interface IRepository {
     public void addProgramState(ProgramState programState);
     public ProgramState getCurrentProgramState();
     public List<ProgramState> getAllProgramStates();
-    public void logProgramStateExecution() throws IOException;
+    public void logProgramStateExecution(ProgramState programState) throws IOException;
+    public void setProgramStates(List<ProgramState> programStates);
+
 }

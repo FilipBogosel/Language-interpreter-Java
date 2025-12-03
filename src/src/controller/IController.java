@@ -15,7 +15,6 @@ public interface IController {
     public void addProgramState(ProgramState programState);
     public ProgramState getCurrentProgramState();
     public List<ProgramState> getAllProgramStates();
-    ProgramState oneStep(ProgramState programState);
     void allSteps() throws IOException;
     void displayCurrentProgramState();
     void toggleDisplayFlag();

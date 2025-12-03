@@ -16,7 +16,7 @@ public record VariableDeclarationStatement(IType variableType, String variableNa
         }
 
         state.symbolTable().declareVariable(variableName, variableType);
-        return state;
+        return null;
     }
 
     @Override

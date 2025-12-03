@@ -8,7 +8,7 @@ public record PrintStatement(IExpression expression) implements IStatement{
     public ProgramState execute(ProgramState state) {
         var value = expression.evaluate(state.symbolTable(), state.heapTable());
         state.outputList().add(value);
-        return state;
+        return null;
     }
 
     @Override

@@ -30,7 +30,7 @@ public record CloseReadFileStatement(IExpression expr) implements IStatement {
         catch(Exception e){
             throw new CloseNonOpenedFileError("File not opened: " + val);
         }
-        return state;
+        return null;
     }
 
     @Override

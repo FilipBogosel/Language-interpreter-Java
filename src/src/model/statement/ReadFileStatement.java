@@ -35,7 +35,7 @@ public record ReadFileStatement(IExpression expression, String variableName) imp
         catch(Exception e){
             throw new ReadError("Error reading from file: " + val);
         }
-        return state;
+        return null;
     }
 
     @Override

@@ -35,7 +35,7 @@ public record OpenReadFileStatement(IExpression expression) implements IStatemen
             throw new OpenFileError("Error opening file: " + val);
         }
 
-        return state;
+        return null;
     }
 
     @Override

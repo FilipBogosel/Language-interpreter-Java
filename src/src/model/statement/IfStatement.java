@@ -29,7 +29,7 @@ public record IfStatement(IExpression condition, IStatement thenStatement,
             state.executionStack().push(elseStatement);
         }
 
-        return state;
+        return null;
     }
     @Override
     public IStatement deepCopy() {

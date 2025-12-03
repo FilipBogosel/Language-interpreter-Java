@@ -4,9 +4,10 @@ import model.value.IValue;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MapHeapTable implements IHeapTable{
-    private final Map<Integer, IValue> heapTable = new HashMap<>();
+    private final Map<Integer, IValue> heapTable = new ConcurrentHashMap<>();
     private int nextFreeAddress = 0;
 
     @Override

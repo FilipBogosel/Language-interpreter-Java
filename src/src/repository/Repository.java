@@ -35,10 +35,15 @@ public class Repository implements IRepository{
     }
 
     @Override
-    public void logProgramStateExecution() throws IOException {
-        ProgramState programState = this.getCurrentProgramState();
+    public void logProgramStateExecution(ProgramState programState) throws IOException {
         try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(this.filename,true)));){
             writer.println(programState.toString());
         }
+    }
+
+    @Override
+    public void setProgramStates(List<ProgramState> programStates) {
+        this.programStates.clear();
+        this.programStates.addAll(programStates);
     }
 }

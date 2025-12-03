@@ -26,7 +26,7 @@ public record AssignmentStatement(String variableName, IExpression expression) i
 
         symbolTable.setValue(variableName, value);
 
-        return state;
+        return null;
 
     }
 

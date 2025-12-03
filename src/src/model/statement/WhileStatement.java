@@ -24,7 +24,7 @@ public record WhileStatement(IExpression expression, IStatement statement) imple
             state.executionStack().push(this);
             state.executionStack().push(statement);
         }
-        return state;
+        return null;
     }
 
     @Override

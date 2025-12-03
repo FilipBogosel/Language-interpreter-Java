@@ -1,16 +1,13 @@
 package controller;
 
-import model.state.ISymbolTable;
 import model.state.MyIStack;
 import model.state.ProgramState;
 import model.statement.IStatement;
-import model.type.RefType;
 import model.value.IValue;
 import model.value.RefValue;
 import repository.IRepository;
 
 import java.io.IOException;
-import java.sql.Ref;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -38,12 +35,7 @@ public class Controller implements IController {
         return repository.getAllProgramStates();
     }
 
-    @Override
-    public ProgramState oneStep(ProgramState programState) {
-        MyIStack<IStatement> executionStack = programState.executionStack();
-        IStatement currentStatement = executionStack.pop();
-        return currentStatement.execute(programState);
-    }
+
 
     @Override
     public void allSteps() throws IOException {
@@ -51,13 +43,13 @@ public class Controller implements IController {
         //maybe display the program state here
 
         if (displayFlag) {
-            this.repository.logProgramStateExecution();
+            this.repository.logProgramStateExecution(repository.getCurrentProgramState());
         }
         while (!currentProgramState.executionStack().isEmpty()) {
             //also maybe display the program state here
             currentProgramState = oneStep(currentProgramState);
             if (displayFlag) {
-                this.repository.logProgramStateExecution();
+                this.repository.logProgramStateExecution(repository.getCurrentProgramState());
             }
             Map<Integer,IValue> heapContent = currentProgramState.heapTable().getContent();
             Collection<IValue> symbolTableValues = currentProgramState.symbolTable().getContent().values();
@@ -67,7 +59,7 @@ public class Controller implements IController {
             currentProgramState.heapTable().setContent(garbageCollectedHeap);
 
             if (displayFlag) {
-                this.repository.logProgramStateExecution();
+                this.repository.logProgramStateExecution(repository.getCurrentProgramState());
             }
         }
     }
