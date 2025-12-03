@@ -54,7 +54,4 @@ public record ProgramState(ISymbolTable<String, IValue> symbolTable,
         IStatement currentStatement = executionStack.pop();
         return currentStatement.execute(this);
     }
-
-
-
 }

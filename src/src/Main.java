@@ -274,6 +274,19 @@ public class Main {
         );
         examples.add(ex9);
 
+        // Example: Ref int v; new(v,20); new(v,30); print(rH(v))
+        IStatement ex10 = new CompoundStatement(
+                new VariableDeclarationStatement(new RefType(IntType.INSTANCE), "v"),
+                new CompoundStatement(
+                        new HeapAllocationStatement("v", new ValueExpression(new IntValue(20))),
+                        new CompoundStatement(
+                                new HeapAllocationStatement("v", new ValueExpression(new IntValue(30))),
+                                new PrintStatement(new ReadHeapExpression(new VariableExpression("v")))
+                        )
+                )
+        );
+        examples.add(ex10);
+
         // Return the list of all examples
         return examples;
     }
