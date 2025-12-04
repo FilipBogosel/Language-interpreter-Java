@@ -8,12 +8,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class MapHeapTable implements IHeapTable{
     private final Map<Integer, IValue> heapTable = new ConcurrentHashMap<>();
-    private int nextFreeAddress = 0;
+    private int nextFreeAddress = 1;
 
     @Override
     public int allocate(IValue value) {
         this.heapTable.put(nextFreeAddress, value);
-        return ++nextFreeAddress;
+        return nextFreeAddress++;
     }
 
     @Override
@@ -50,6 +50,9 @@ public class MapHeapTable implements IHeapTable{
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("Heap Table:\n");
+        if (heapTable.isEmpty()) {
+            return "Heap Table: empty\n";
+        }
         for (var pair : heapTable.entrySet()){
             sb.append("  ").append(pair.getKey()).append(" -> ").append(pair.getValue()).append("\n");
         }

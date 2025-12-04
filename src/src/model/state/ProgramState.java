@@ -36,6 +36,7 @@ public record ProgramState(ISymbolTable<String, IValue> symbolTable,
                 symbolTable.toString() + "\n" +
                 outputList.toString() + "\n"+
                 fileTable.toString() + "\n"+
+                heapTable.toString() + "\n" +
                 "====================\n";
     }
 
