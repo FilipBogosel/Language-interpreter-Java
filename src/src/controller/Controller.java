@@ -1,5 +1,6 @@
 package controller;
 
+import model.state.IHeapTable;
 import model.state.MyIStack;
 import model.state.ProgramState;
 import model.statement.IStatement;
@@ -9,11 +10,15 @@ import repository.IRepository;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 public class Controller implements IController {
     IRepository repository;
     boolean displayFlag;
+    ExecutorService executor;
 
     public Controller(IRepository repository) {
         this.repository = repository;
@@ -26,48 +31,27 @@ public class Controller implements IController {
     }
 
     @Override
-    public ProgramState getCurrentProgramState() {
-        return repository.getCurrentProgramState();
-    }
-
-    @Override
     public List<ProgramState> getAllProgramStates() {
         return repository.getAllProgramStates();
     }
 
 
-
     @Override
     public void allSteps() throws IOException {
-        ProgramState currentProgramState = getCurrentProgramState();
-        //maybe display the program state here
-
-        if (displayFlag) {
-            this.repository.logProgramStateExecution(repository.getCurrentProgramState());
+        this.executor = Executors.newFixedThreadPool(5);
+        IHeapTable commonHeapTable = getAllProgramStates().getFirst().heapTable();
+        List<ProgramState> runningProgramStates = removeCompletedProgramStates(getAllProgramStates());
+        while(!runningProgramStates.isEmpty()){
+            Map<Integer,IValue> garbageCollectedHeap = garbageCollector(this.getAllSymbolTableValues(), commonHeapTable.getContent());
+            commonHeapTable.setContent(garbageCollectedHeap);//common heap table -> if updated, all the program
+            // states will be updated(it's a reference)
+            oneStepForAllPrograms(runningProgramStates);
+            runningProgramStates = removeCompletedProgramStates(getAllProgramStates());
         }
-        while (!currentProgramState.executionStack().isEmpty()) {
-            //also maybe display the program state here
-            currentProgramState = oneStep(currentProgramState);
-            if (displayFlag) {
-                this.repository.logProgramStateExecution(repository.getCurrentProgramState());
-            }
-            Map<Integer,IValue> heapContent = currentProgramState.heapTable().getContent();
-            Collection<IValue> symbolTableValues = currentProgramState.symbolTable().getContent().values();
-
-            Map<Integer,IValue> garbageCollectedHeap = garbageCollector(symbolTableValues, heapContent);
-
-            currentProgramState.heapTable().setContent(garbageCollectedHeap);
-
-            if (displayFlag) {
-                this.repository.logProgramStateExecution(repository.getCurrentProgramState());
-            }
-        }
+        executor.shutdownNow();
+        repository.setProgramStates(getAllProgramStates());
     }
 
-    @Override
-    public void displayCurrentProgramState() {
-        IO.println(this.getCurrentProgramState());
-    }
 
     @Override
     public void toggleDisplayFlag() {
@@ -75,21 +59,20 @@ public class Controller implements IController {
     }
 
     @Override
-    public List<Integer> getAddressFromValues(Collection<IValue> values) {
+    public Set<Integer> getAddressFromValues(Collection<IValue> values) {
         return values.stream()
                 .filter(v -> v instanceof RefValue)
                 .map(v -> {
                     RefValue v1 = (RefValue) v;
                     return v1.address();
                 })
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
+
     @Override
     public Map<Integer, IValue> garbageCollector(Collection<IValue> symTableValues, Map<Integer, IValue> heap) {
 
-        List<Integer> symTableAddresses = getAddressFromValues(symTableValues);
-
-        Set<Integer> reachableAddresses = new HashSet<>(symTableAddresses);
+        Set<Integer> reachableAddresses = getAddressFromValues(symTableValues);
 
         boolean changed = true;
         while (changed) {
@@ -100,7 +83,7 @@ public class Controller implements IController {
                     .collect(Collectors.toList());
 
             // Find the addresses of the values found above
-            List<Integer> newAddresses = getAddressFromValues(currentReachableValues); // Use generic helper again
+            Set<Integer> newAddresses = getAddressFromValues(currentReachableValues); // Use generic helper again
 
             // Add the new addresses to the reachable addresses
             changed = reachableAddresses.addAll(newAddresses);
@@ -110,6 +93,65 @@ public class Controller implements IController {
         return heap.entrySet().stream()
                 .filter(e -> reachableAddresses.contains(e.getKey()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    @Override
+    public List<ProgramState> removeCompletedProgramStates(List<ProgramState> programStates) {
+        return programStates.stream()
+                .filter(ProgramState::isNotCompleted)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void oneStepForAllPrograms(List<ProgramState> programStates) {
+        programStates.forEach(programState -> {
+            try {
+                repository.logProgramStateExecution(programState);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+        //Make the list of Callable items functionally
+        List<Callable<ProgramState>> callableList = programStates.stream()
+                    .map((ProgramState p) -> (Callable<ProgramState>) (p::oneStep))
+                    .collect(Collectors.toList());
+
+        //start the execution of the callables and functionally retrieve in a list
+        //the newly created program states(by forks)
+        try {
+            List<ProgramState> newProgramSates = executor.invokeAll(callableList).stream()
+                        .map(future -> {
+                            try {
+                                return future.get();
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                        })
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
+            programStates.addAll(newProgramSates);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        programStates.forEach(programState -> {
+            try {
+                repository.logProgramStateExecution(programState);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+        repository.setProgramStates(programStates);
+
+    }
+
+    /**
+     * @return List of all the values stored in the symbol table of all the program states.
+     */
+    @Override
+    public List<IValue> getAllSymbolTableValues() {
+        return getAllProgramStates().stream()
+                .flatMap(programState -> programState.symbolTable().getContent().values().stream())
+                .collect(Collectors.toList());
     }
 
 }

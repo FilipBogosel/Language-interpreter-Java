@@ -287,6 +287,38 @@ public class Main {
         );
         examples.add(ex10);
 
+        // Example 11: Concurrent execution with fork
+        // Ref int a; int v; new(a,22); fork(...); print(v); print(rH(a))
+        CompoundStatement statementSecond = new CompoundStatement(
+                new PrintStatement(new VariableExpression("v")),
+                new PrintStatement(new ReadHeapExpression(new VariableExpression("a")))
+        );
+        IStatement ex11 = new CompoundStatement(
+                new VariableDeclarationStatement(new RefType(IntType.INSTANCE), "a"),
+                new CompoundStatement(
+                        new VariableDeclarationStatement(IntType.INSTANCE, "v"),
+                        new CompoundStatement(
+                                new AssignmentStatement("v", new ValueExpression(new IntValue(10))),
+                                new CompoundStatement(
+                                        new HeapAllocationStatement("a", new ValueExpression(new IntValue(22))),
+                                        new CompoundStatement(
+                                                new ForkStatement(
+                                                        new CompoundStatement(
+                                                                new HeapWriteStatement("a", new ValueExpression(new IntValue(30))),
+                                                                new CompoundStatement(
+                                                                        new AssignmentStatement("v", new ValueExpression(new IntValue(32))),
+                                                                        statementSecond
+                                                                )
+                                                        )
+                                                ),
+                                                statementSecond
+                                        )
+                                )
+                        )
+                )
+        );
+        examples.add(ex11);
+
         // Return the list of all examples
         return examples;
     }

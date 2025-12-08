@@ -33,6 +33,15 @@ public class MapSymbolTable implements ISymbolTable<String,IValue> {
         return new HashMap<>(symbolTable);
     }
 
+    @Override
+    public ISymbolTable<String, IValue> deepCopy() {
+        MapSymbolTable copy = new MapSymbolTable();
+        for(var variables : symbolTable.entrySet()){
+            copy.setValue(variables.getKey(), variables.getValue());
+        }
+        return copy;
+    }
+
 
     @Override
     public IValue getValue(String variableName) {
@@ -51,5 +60,7 @@ public class MapSymbolTable implements ISymbolTable<String,IValue> {
         );
         return sb.toString();
     }
+
+
 
 }
