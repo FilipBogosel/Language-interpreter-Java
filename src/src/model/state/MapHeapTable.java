@@ -5,15 +5,17 @@ import model.value.IValue;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class MapHeapTable implements IHeapTable{
     private final Map<Integer, IValue> heapTable = new ConcurrentHashMap<>();
-    private int nextFreeAddress = 1;
+    private final AtomicInteger nextFreeAddress = new AtomicInteger(1);
 
     @Override
     public int allocate(IValue value) {
-        this.heapTable.put(nextFreeAddress, value);
-        return nextFreeAddress++;
+        int address = nextFreeAddress.get();
+        this.heapTable.put(address, value);
+        return nextFreeAddress.getAndIncrement();
     }
 
     @Override
