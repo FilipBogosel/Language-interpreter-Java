@@ -3,7 +3,9 @@ package model.statement;
 import model.exception.CloseNonOpenedFileError;
 import model.exception.DifferentTypesExpressionError;
 import model.expression.IExpression;
+import model.state.ISymbolTable;
 import model.state.ProgramState;
+import model.type.IType;
 import model.type.StringType;
 import model.value.IValue;
 import model.value.StringValue;
@@ -36,6 +38,17 @@ public record CloseReadFileStatement(IExpression expr) implements IStatement {
     @Override
     public IStatement deepCopy() {
         return new CloseReadFileStatement(expr.deepCopy());
+    }
+
+    @Override
+    public ISymbolTable<String, IType> typecheck(ISymbolTable<String, IType> typeEnvironment) {
+        IType expType = expr.typecheck(typeEnvironment);
+        if (expType.equals(StringType.INSTANCE)) {
+            return typeEnvironment;
+        }
+        else {
+            throw new DifferentTypesExpressionError("CloseReadFile stmt: expression is not a string");
+        }
     }
 
     @Override

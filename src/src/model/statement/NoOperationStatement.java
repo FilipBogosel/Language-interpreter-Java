@@ -1,6 +1,8 @@
 package model.statement;
 
+import model.state.ISymbolTable;
 import model.state.ProgramState;
+import model.type.IType;
 
 public class NoOperationStatement implements IStatement {
 
@@ -12,6 +14,11 @@ public class NoOperationStatement implements IStatement {
     @Override
     public IStatement deepCopy() {
         return new NoOperationStatement();
+    }
+
+    @Override
+    public ISymbolTable<String, IType> typecheck(ISymbolTable<String, IType> typeEnvironment) {
+        return typeEnvironment;
     }
 
     @Override

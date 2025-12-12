@@ -4,6 +4,7 @@ import model.exception.DifferentTypesExpressionError;
 import model.exception.VariableNotDefinedError;
 import model.state.IHeapTable;
 import model.state.ISymbolTable;
+import model.type.IType;
 import model.type.RefType;
 import model.value.IValue;
 import model.value.RefValue;
@@ -26,5 +27,15 @@ public record ReadHeapExpression(IExpression expression) implements IExpression 
     @Override
     public IExpression deepCopy() {
         return new ReadHeapExpression(expression.deepCopy());
+    }
+
+    @Override
+    public IType typecheck(ISymbolTable<String, IType> typeEnvironment) {
+        IType typ=expression.typecheck(typeEnvironment);
+        if (typ instanceof RefType) {
+            RefType reft =(RefType) typ;
+            return reft.innerType();
+        } else
+            throw new DifferentTypesExpressionError("the rH argument is not a Ref Type");
     }
 }

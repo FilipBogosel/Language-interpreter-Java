@@ -3,6 +3,7 @@ package model.statement;
 import model.exception.DifferentTypesExpressionError;
 import model.exception.VariableNotDefinedError;
 import model.expression.IExpression;
+import model.state.ISymbolTable;
 import model.state.ProgramState;
 import model.type.IType;
 import model.type.RefType;
@@ -33,6 +34,17 @@ public record HeapAllocationStatement(String variableName, IExpression expressio
     public IStatement deepCopy() {
         return new HeapAllocationStatement(variableName, expression.deepCopy());
     }
+
+    @Override
+    public ISymbolTable<String, IType> typecheck(ISymbolTable<String, IType> typeEnvironment) {
+        IType variableType = typeEnvironment.getValue(variableName);
+        IType expType = expression.typecheck(typeEnvironment);
+        if (variableType.equals(new RefType(expType)))
+            return typeEnvironment;
+        else
+            throw new DifferentTypesExpressionError("NEW stmt: right hand side and left hand side have different types ");
+    }
+
     @Override
     public String toString(){
         return "new("+variableName+","+expression+")";

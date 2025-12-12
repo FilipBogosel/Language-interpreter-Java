@@ -5,6 +5,7 @@ import model.exception.VariableNotDefinedError;
 import model.expression.IExpression;
 import model.state.ProgramState;
 import model.state.ISymbolTable;
+import model.type.IType;
 import model.value.IValue;
 
 
@@ -33,6 +34,18 @@ public record AssignmentStatement(String variableName, IExpression expression) i
     @Override
     public IStatement deepCopy() {
         return new AssignmentStatement(variableName, expression.deepCopy());
+    }
+
+    @Override
+    public ISymbolTable<String, IType> typecheck(ISymbolTable<String, IType> typeEnvironment) {
+        IType variableType = typeEnvironment.getValue(variableName);
+        IType expressionType = expression.typecheck(typeEnvironment);
+        if (variableType.equals(expressionType)) {
+            return typeEnvironment;
+        }
+        else {
+            throw new DifferentTypesExpressionError("Assignment: right hand side and left hand side have different types ");
+        }
     }
 
     @Override

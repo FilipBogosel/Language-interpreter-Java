@@ -2,10 +2,7 @@
 import model.expression.*;
 import model.state.*;
 import model.statement.*;
-import model.type.BooleanType;
-import model.type.IntType;
-import model.type.RefType;
-import model.type.StringType;
+import model.type.*;
 import model.value.BooleanValue;
 import model.value.IntValue;
 import model.value.StringValue;
@@ -30,6 +27,9 @@ public class Main {
         int exampleNumber = 1;
         for (IStatement statement : allExamples) {
             try {
+
+                ISymbolTable<String, IType> typeEnvironment = new MapTypeEnvironment();
+                statement.typecheck(typeEnvironment);
                 ProgramState programState = createProgramState(statement);
 
                 String logFilePath = "log" + exampleNumber + ".txt";
@@ -47,6 +47,7 @@ public class Main {
             } catch (Exception e) {
                 System.err.println("Error initializing example: " + statement.toString());
                 System.err.println(e.getMessage());
+                System.exit(1);
             }
             exampleNumber++;
         }
@@ -318,6 +319,13 @@ public class Main {
                 )
         );
         examples.add(ex11);
+
+        // Example 12: Example of typechecker errors
+        IStatement ex12 = new CompoundStatement(
+                new VariableDeclarationStatement(IntType.INSTANCE, "v"),
+                new AssignmentStatement("v", new ValueExpression(new BooleanValue(true))) // Type error here
+        );
+        //examples.add(ex12);
 
         // Return the list of all examples
         return examples;

@@ -5,7 +5,9 @@ import model.exception.FileAlreadyOpenedError;
 import model.exception.OpenFileError;
 import model.expression.IExpression;
 import model.state.IFileTable;
+import model.state.ISymbolTable;
 import model.state.ProgramState;
+import model.type.IType;
 import model.type.StringType;
 import model.value.IValue;
 import model.value.StringValue;
@@ -41,6 +43,17 @@ public record OpenReadFileStatement(IExpression expression) implements IStatemen
     @Override
     public IStatement deepCopy() {
         return new OpenReadFileStatement(expression.deepCopy());
+    }
+
+    @Override
+    public ISymbolTable<String, IType> typecheck(ISymbolTable<String, IType> typeEnvironment) {
+        IType expType = expression.typecheck(typeEnvironment);
+        if (expType.equals(StringType.INSTANCE)) {
+            return typeEnvironment;
+        }
+        else {
+            throw new DifferentTypesExpressionError("OpenReadFile stmt: expression is not a string");
+        }
     }
 
     @Override

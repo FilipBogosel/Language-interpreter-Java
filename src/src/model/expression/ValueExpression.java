@@ -2,6 +2,7 @@ package model.expression;
 
 import model.state.IHeapTable;
 import model.state.ISymbolTable;
+import model.type.IType;
 import model.value.IValue;
 
 public record ValueExpression(IValue value) implements IExpression {
@@ -13,6 +14,11 @@ public record ValueExpression(IValue value) implements IExpression {
     @Override
     public IExpression deepCopy() {
         return new ValueExpression(value);
+    }
+
+    @Override
+    public IType typecheck(ISymbolTable<String, IType> typeEnvironment) {
+        return value.getType();
     }
 
     @Override

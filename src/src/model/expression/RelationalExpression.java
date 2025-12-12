@@ -4,6 +4,8 @@ import model.exception.DifferentTypesExpressionError;
 import model.exception.InvalidOperationError;
 import model.state.IHeapTable;
 import model.state.ISymbolTable;
+import model.type.BooleanType;
+import model.type.IType;
 import model.type.IntType;
 import model.value.IValue;
 import model.value.IntValue;
@@ -39,6 +41,24 @@ public record RelationalExpression(IExpression leftExpression, IExpression right
     @Override
     public IExpression deepCopy() {
         return new RelationalExpression(leftExpression.deepCopy(), rightExpression.deepCopy(), operator);
+    }
+
+    @Override
+    public IType typecheck(ISymbolTable<String, IType> typeEnvironment) {
+        IType typ1, typ2;
+        typ1=leftExpression.typecheck(typeEnvironment);
+        typ2=rightExpression.typecheck(typeEnvironment);
+        if (typ1.equals(IntType.INSTANCE)) {
+            if (typ2.equals(IntType.INSTANCE)) {
+                return BooleanType.INSTANCE;
+            }
+            else{
+                throw new DifferentTypesExpressionError("second operand is not an integer");
+            }
+        }
+        else{
+            throw new DifferentTypesExpressionError("first operand is not an integer");
+        }
     }
 
     @Override

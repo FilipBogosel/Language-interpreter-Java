@@ -2,9 +2,9 @@ package model.statement;
 
 
 import model.exception.VariableAlreadyDefined;
+import model.state.ISymbolTable;
 import model.state.ProgramState;
 import model.type.IType;
-import model.value.IValue;
 
 public record VariableDeclarationStatement(IType variableType, String variableName) implements IStatement {
 
@@ -22,6 +22,12 @@ public record VariableDeclarationStatement(IType variableType, String variableNa
     @Override
     public IStatement deepCopy() {
         return new VariableDeclarationStatement(variableType,variableName);
+    }
+
+    @Override
+    public ISymbolTable<String, IType> typecheck(ISymbolTable<String, IType> typeEnvironment) {
+        typeEnvironment.setValue(variableName, variableType);
+        return typeEnvironment;
     }
 
     @Override

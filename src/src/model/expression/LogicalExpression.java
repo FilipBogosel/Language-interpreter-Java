@@ -5,6 +5,7 @@ import model.exception.InvalidOperationError;
 import model.state.IHeapTable;
 import model.state.ISymbolTable;
 import model.type.BooleanType;
+import model.type.IType;
 import model.value.BooleanValue;
 import model.value.IValue;
 
@@ -38,6 +39,24 @@ public record LogicalExpression(IExpression leftExpression, IExpression rightExp
     @Override
     public IExpression deepCopy() {
         return new LogicalExpression(leftExpression.deepCopy(), rightExpression.deepCopy(), operation);
+    }
+
+    @Override
+    public IType typecheck(ISymbolTable<String, IType> typeEnvironment) {
+        IType typ1, typ2;
+        typ1=leftExpression.typecheck(typeEnvironment);
+        typ2=rightExpression.typecheck(typeEnvironment);
+        if (typ1.equals(BooleanType.INSTANCE)) {
+            if (typ2.equals(BooleanType.INSTANCE)) {
+                return BooleanType.INSTANCE;
+            }
+            else{
+                throw new DifferentTypesExpressionError("second operand is not a boolean");
+            }
+        }
+        else{
+            throw new DifferentTypesExpressionError("first operand is not a boolean");
+        }
     }
 
     @Override

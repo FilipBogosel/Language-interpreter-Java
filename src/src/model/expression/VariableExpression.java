@@ -3,6 +3,7 @@ package model.expression;
 import model.exception.VariableNotDefinedError;
 import model.state.IHeapTable;
 import model.state.ISymbolTable;
+import model.type.IType;
 import model.value.IValue;
 
 public record VariableExpression(String variableName) implements IExpression{
@@ -18,6 +19,12 @@ public record VariableExpression(String variableName) implements IExpression{
     public IExpression deepCopy() {
         return new VariableExpression(variableName);
     }
+
+    @Override
+    public IType typecheck(ISymbolTable<String, IType> typeEnvironment) {
+        return typeEnvironment.getValue(variableName);
+    }
+
     @Override
     public String toString() {
         return variableName;

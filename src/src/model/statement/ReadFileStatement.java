@@ -4,7 +4,10 @@ import model.exception.DifferentTypesExpressionError;
 import model.exception.FileNotOpenedError;
 import model.exception.ReadError;
 import model.expression.IExpression;
+import model.state.ISymbolTable;
 import model.state.ProgramState;
+import model.type.IType;
+import model.type.IntType;
 import model.type.StringType;
 import model.value.IValue;
 import model.value.IntValue;
@@ -41,6 +44,19 @@ public record ReadFileStatement(IExpression expression, String variableName) imp
     @Override
     public IStatement deepCopy() {
         return new ReadFileStatement(expression.deepCopy(), variableName);
+    }
+
+    @Override
+    public ISymbolTable<String, IType> typecheck(ISymbolTable<String, IType> typeEnvironment) {
+        IType expType = expression.typecheck(typeEnvironment);
+        if (!expType.equals(StringType.INSTANCE)) {
+            throw new DifferentTypesExpressionError("ReadFile stmt: expression is not a string");
+        }
+        IType varType = typeEnvironment.getValue(variableName);
+        if (!varType.equals(IntType.INSTANCE)) {
+            throw new DifferentTypesExpressionError("ReadFile stmt: variable is not an integer");
+        }
+        return typeEnvironment;
     }
 
     @Override

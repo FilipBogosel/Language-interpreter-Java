@@ -1,7 +1,9 @@
 package model.statement;
 
 import model.expression.IExpression;
+import model.state.ISymbolTable;
 import model.state.ProgramState;
+import model.type.IType;
 
 public record PrintStatement(IExpression expression) implements IStatement{
     @Override
@@ -14,6 +16,12 @@ public record PrintStatement(IExpression expression) implements IStatement{
     @Override
     public IStatement deepCopy() {
         return new PrintStatement(expression.deepCopy());
+    }
+
+    @Override
+    public ISymbolTable<String, IType> typecheck(ISymbolTable<String, IType> typeEnvironment) {
+        expression.typecheck(typeEnvironment);
+        return typeEnvironment;
     }
 
     @Override

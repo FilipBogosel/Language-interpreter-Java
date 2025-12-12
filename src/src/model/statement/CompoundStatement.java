@@ -1,6 +1,8 @@
 package model.statement;
 
+import model.state.ISymbolTable;
 import model.state.ProgramState;
+import model.type.IType;
 
 
 public record CompoundStatement(IStatement statementFirst, IStatement statementSecond) implements IStatement {
@@ -14,6 +16,11 @@ public record CompoundStatement(IStatement statementFirst, IStatement statementS
     @Override
     public IStatement deepCopy() {
         return new CompoundStatement(statementFirst.deepCopy(), statementSecond.deepCopy());
+    }
+
+    @Override
+    public ISymbolTable<String, IType> typecheck(ISymbolTable<String, IType> typeEnvironment) {
+        return statementSecond.typecheck(statementFirst.typecheck(typeEnvironment));
     }
 
     @Override

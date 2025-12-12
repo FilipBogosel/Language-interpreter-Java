@@ -1,9 +1,7 @@
 package model.statement;
 
-import model.state.IHeapTable;
-import model.state.ListExecutionStack;
-import model.state.MyIStack;
-import model.state.ProgramState;
+import model.state.*;
+import model.type.IType;
 
 public record ForkStatement(IStatement innerStatement) implements IStatement {
     @Override
@@ -16,6 +14,11 @@ public record ForkStatement(IStatement innerStatement) implements IStatement {
     @Override
     public IStatement deepCopy() {
         return new ForkStatement(innerStatement.deepCopy());
+    }
+
+    @Override
+    public ISymbolTable<String, IType> typecheck(ISymbolTable<String, IType> typeEnvironment) {
+        return innerStatement.typecheck(typeEnvironment.deepCopy());
     }
 
     @Override
