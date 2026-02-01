@@ -38,4 +38,9 @@ public record ReadHeapExpression(IExpression expression) implements IExpression 
         } else
             throw new DifferentTypesExpressionError("the rH argument is not a Ref Type");
     }
+
+    @Override
+    public String toString() {
+        return "readHeap(" + expression + ")";
+    }
 }

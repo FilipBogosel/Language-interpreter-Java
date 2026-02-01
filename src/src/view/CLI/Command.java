@@ -1,4 +1,4 @@
-package view;
+package view.CLI;
 public abstract class Command {
     private final String key;
     private final String description;

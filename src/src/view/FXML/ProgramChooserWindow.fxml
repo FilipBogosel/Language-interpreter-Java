@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="490.0" prefWidth="732.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.GUI.ProgramChooserController">
+   <children>
+      <ListView fx:id="programsListView" editable="true" prefHeight="389.0" prefWidth="741.0" />
+      <Button fx:id="runProgramButton" mnemonicParsing="false" onAction="#runSelectedProgram" text="Run Program" textAlignment="CENTER">
+         <VBox.margin>
+            <Insets top="10.0" />
+         </VBox.margin>
+         <font>
+            <Font size="19.0" />
+         </font></Button>
+   </children>
+</VBox>
