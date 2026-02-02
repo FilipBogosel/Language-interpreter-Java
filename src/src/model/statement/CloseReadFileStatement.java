@@ -18,7 +18,7 @@ public record CloseReadFileStatement(IExpression expr) implements IStatement {
 
         IValue val = expr.evaluate(state.symbolTable(), state.heapTable());
         if(!StringType.INSTANCE.equals(val.getType())) {
-            throw new DifferentTypesExpressionError("Open read file statement must have as parameter a String value as result of expression");
+            throw new DifferentTypesExpressionError("Open read file statement must have as parameter a String value as result of innerExpression");
         }
         StringValue strVal = (StringValue) val;
         if(!state.fileTable().isDefined(strVal.value())){
@@ -47,7 +47,7 @@ public record CloseReadFileStatement(IExpression expr) implements IStatement {
             return typeEnvironment;
         }
         else {
-            throw new DifferentTypesExpressionError("CloseReadFile stmt: expression is not a string");
+            throw new DifferentTypesExpressionError("CloseReadFile stmt: innerExpression is not a string");
         }
     }
 

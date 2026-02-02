@@ -18,7 +18,7 @@ public record ArithmeticExpression(IExpression leftExpression, IExpression right
         IValue leftValue = leftExpression.evaluate(symbolTable,heapTable);
         IValue rightValue = rightExpression.evaluate(symbolTable,heapTable);
         if(!(leftValue.getType() instanceof IntType) || !(rightValue.getType() instanceof IntType)){
-            throw new DifferentTypesExpressionError("Needed integer type for arithmetic expression");
+            throw new DifferentTypesExpressionError("Needed integer type for arithmetic innerExpression");
         }
         if(!leftValue.getType().equals(rightValue.getType())){
             throw new DifferentTypesExpressionError("Type mismatch in ArithmeticExpression");
@@ -70,6 +70,11 @@ public record ArithmeticExpression(IExpression leftExpression, IExpression right
         else{
             throw new DifferentTypesExpressionError("first operand is not an integer");
         }
+    }
+
+    @Override
+    public IExpression getNegation() {
+        return null;
     }
 
     @Override

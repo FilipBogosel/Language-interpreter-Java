@@ -9,4 +9,5 @@ public interface IExpression {
     public IValue evaluate(ISymbolTable<String,IValue> symbolTable, IHeapTable heapTable);
     public IExpression deepCopy();
     public IType typecheck(ISymbolTable<String,IType> typeEnvironment);
+    public IExpression getNegation();
 }

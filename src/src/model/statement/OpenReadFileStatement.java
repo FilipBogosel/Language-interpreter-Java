@@ -21,7 +21,7 @@ public record OpenReadFileStatement(IExpression expression) implements IStatemen
         IFileTable fileTable = state.fileTable();
         IValue val = expression.evaluate(state.symbolTable(), state.heapTable());
         if(!StringType.INSTANCE.equals(val.getType())) {
-            throw new DifferentTypesExpressionError("Open read file statement must have as parameter a String value as result of expression");
+            throw new DifferentTypesExpressionError("Open read file statement must have as parameter a String value as result of innerExpression");
         }
         StringValue strVal = (StringValue) val;
         if(fileTable.isDefined(strVal.value())){
@@ -52,7 +52,7 @@ public record OpenReadFileStatement(IExpression expression) implements IStatemen
             return typeEnvironment;
         }
         else {
-            throw new DifferentTypesExpressionError("OpenReadFile stmt: expression is not a string");
+            throw new DifferentTypesExpressionError("OpenReadFile stmt: innerExpression is not a string");
         }
     }
 

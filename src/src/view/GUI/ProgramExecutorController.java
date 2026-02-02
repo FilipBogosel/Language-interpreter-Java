@@ -6,6 +6,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.beans.property.SimpleStringProperty; // Import this!
 import javafx.util.Pair;
+import model.state.ILockTable;
+import model.state.ISemaphoreTable;
 import model.state.ProgramState;
 import model.statement.IStatement;
 import model.value.IValue;
@@ -46,22 +48,35 @@ public class ProgramExecutorController {
     @FXML
     private Button runOneStepButton;
 
+    @FXML
+    private TableView<Map.Entry<Integer, javafx.util.Pair<Integer, List<Integer>>>> semaphoreTableView;
+    @FXML
+    private TableColumn<Map.Entry<Integer, javafx.util.Pair<Integer, List<Integer>>>, String> semaphoreIndexColumn;
+    @FXML
+    private TableColumn<Map.Entry<Integer, javafx.util.Pair<Integer, List<Integer>>>, String> semaphoreValueColumn;
+    @FXML
+    private TableColumn<Map.Entry<Integer, javafx.util.Pair<Integer, List<Integer>>>, String> semaphoreListColumn;
+
+    @FXML
+    private TableView<Pair<Integer, Integer>> lockTableView;
+    @FXML
+    private TableColumn<Pair<Integer, Integer>, String> lockLocationColumn;
+    @FXML
+    private TableColumn<Pair<Integer, Integer>, String> lockValueColumn;
     private Controller controller;
 
 
 
     @FXML
     public void initialize() {
-        addressColumn.setCellValueFactory(p
-                -> new SimpleStringProperty(p.getValue().getKey().toString()));
-        valueColumn.setCellValueFactory(p
-                -> new SimpleStringProperty(p.getValue().getValue().toString()));
+        formatHeapTableView();
+        formatSymbolTableView();
+        formatSemaphoreTableView();
+        formatLockTableView();
+        setProgramStateListViewListener();
+    }
 
-        variableNameColumn.setCellValueFactory(p
-                -> new SimpleStringProperty(p.getValue().getKey()));
-        variableValueColumn.setCellValueFactory(p
-                -> new SimpleStringProperty(p.getValue().getValue().toString()));
-
+    private void setProgramStateListViewListener() {
         programStateIdentifiersListView.getSelectionModel().selectedItemProperty().addListener(
                 (obs, oldVal, newVal) -> {
                 if (newVal != null) {
@@ -69,6 +84,36 @@ public class ProgramExecutorController {
                     populateExecutionStack();
                 }
         });
+    }
+
+    private void formatLockTableView() {
+        lockLocationColumn.setCellValueFactory(p
+                -> new SimpleStringProperty(p.getValue().getKey().toString()));
+        lockValueColumn.setCellValueFactory(p
+                -> new SimpleStringProperty(p.getValue().getValue().toString()));
+    }
+
+    private void formatSemaphoreTableView() {
+        semaphoreIndexColumn.setCellValueFactory(p
+                -> new SimpleStringProperty(p.getValue().getKey().toString()));
+        semaphoreValueColumn.setCellValueFactory(p
+                -> new SimpleStringProperty(p.getValue().getValue().getKey().toString()));
+        semaphoreListColumn.setCellValueFactory(p
+                -> new SimpleStringProperty(p.getValue().getValue().getValue().toString()));
+    }
+
+    private void formatSymbolTableView() {
+        variableNameColumn.setCellValueFactory(p
+                -> new SimpleStringProperty(p.getValue().getKey()));
+        variableValueColumn.setCellValueFactory(p
+                -> new SimpleStringProperty(p.getValue().getValue().toString()));
+    }
+
+    private void formatHeapTableView() {
+        addressColumn.setCellValueFactory(p
+                -> new SimpleStringProperty(p.getValue().getKey().toString()));
+        valueColumn.setCellValueFactory(p
+                -> new SimpleStringProperty(p.getValue().getValue().toString()));
     }
 
     @FXML
@@ -79,9 +124,7 @@ public class ProgramExecutorController {
         }
 
         try {
-            // 1. Get the list of current programs BEFORE the step
             List<ProgramState> programStates = controller.getAllProgramStates();
-
             if (!programStates.isEmpty()) {
                 controller.oneStepForGUI();
                 populate();
@@ -119,17 +162,16 @@ public class ProgramExecutorController {
 
     private void populate() {
         populateProgramStateIdentifiers();
-
-        // Auto-select first program state
         if (!programStateIdentifiersListView.getItems().isEmpty()) {
             programStateIdentifiersListView.getSelectionModel().selectFirst();
         }
-
         populateHeap();
         populateFileTable();
         populateOutput();
         populateSymbolTable();
         populateExecutionStack();
+        populateSemaphoreTable();
+        populateLockTable();
     }
 
 
@@ -204,5 +246,33 @@ public class ProgramExecutorController {
             heapEntries.add(new Pair<>(entry.getKey(), entry.getValue()));
         }
         heapTableView.setItems(FXCollections.observableList(heapEntries));
+    }
+
+    private void populateSemaphoreTable() {
+        ProgramState programState = getCurrentProgramState();
+        if (programState == null) return;
+
+        ISemaphoreTable semaphoreTable = programState.semaphoreTable();
+        List<Map.Entry<Integer, javafx.util.Pair<Integer, List<Integer>>>> semaphoreList = new ArrayList<>();
+
+        semaphoreList.addAll(semaphoreTable.getContent().entrySet());
+
+        semaphoreTableView.setItems(FXCollections.observableArrayList(semaphoreList));
+        semaphoreTableView.refresh();
+    }
+
+    private void populateLockTable() {
+        ProgramState programState = getCurrentProgramState();
+        if (programState == null) return;
+
+        ILockTable lockTable = programState.lockTable();
+        List<Pair<Integer, Integer>> lockList = new ArrayList<>();
+
+        for (Map.Entry<Integer, Integer> entry : lockTable.getContent().entrySet()) {
+            lockList.add(new Pair<>(entry.getKey(), entry.getValue()));
+        }
+
+        lockTableView.setItems(FXCollections.observableArrayList(lockList));
+        lockTableView.refresh();
     }
 }

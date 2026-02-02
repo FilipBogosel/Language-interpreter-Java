@@ -61,6 +61,7 @@ public class ProgramChooserController {
             IRepository repository = new Repository("log_gui.txt");
             repository.addProgramState(programState);
             Controller backendController = new Controller(repository);
+            backendController.toggleDisplayFlag();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/FXML/ProgramExecutorWindow.fxml"));
             Parent root = loader.load();
             ProgramExecutorController executorController = loader.getController();

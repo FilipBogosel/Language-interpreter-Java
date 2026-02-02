@@ -20,7 +20,7 @@ public record RelationalExpression(IExpression leftExpression, IExpression right
         IValue leftValue = leftExpression.evaluate(symbolTable, heapTable);
         IValue rightValue = rightExpression.evaluate(symbolTable, heapTable);
         if (!(leftValue.getType() instanceof IntType) || !(rightValue.getType() instanceof IntType)) {
-            throw new DifferentTypesExpressionError("Needed integer type for relational expression");
+            throw new DifferentTypesExpressionError("Needed integer type for relational innerExpression");
         }
         if (!leftValue.getType().equals(rightValue.getType())) {
             throw new DifferentTypesExpressionError("Type mismatch in RelationalExpression");
@@ -59,6 +59,19 @@ public record RelationalExpression(IExpression leftExpression, IExpression right
         else{
             throw new DifferentTypesExpressionError("first operand is not an integer");
         }
+    }
+
+    @Override
+    public IExpression getNegation() {
+        return switch (operator) {
+            case 1 -> new RelationalExpression(leftExpression.deepCopy(), rightExpression.deepCopy(), 6);
+            case 2 -> new RelationalExpression(leftExpression.deepCopy(), rightExpression.deepCopy(), 5);
+            case 3 -> new RelationalExpression(leftExpression.deepCopy(), rightExpression.deepCopy(), 4);
+            case 4 -> new RelationalExpression(leftExpression.deepCopy(), rightExpression.deepCopy(), 3);
+            case 5 -> new RelationalExpression(leftExpression.deepCopy(), rightExpression.deepCopy(), 2);
+            case 6 -> new RelationalExpression(leftExpression.deepCopy(), rightExpression.deepCopy(), 1);
+            default -> throw new InvalidOperationError("Invalid operation for RelationalExpression");
+        };
     }
 
     @Override

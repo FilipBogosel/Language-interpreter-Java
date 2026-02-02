@@ -16,7 +16,7 @@ public record LogicalExpression(IExpression leftExpression, IExpression rightExp
         IValue leftValue = leftExpression.evaluate(symbolTable, heapTable);
         IValue rightValue = rightExpression.evaluate(symbolTable, heapTable);
         if(!(leftValue.getType() instanceof BooleanType) || !(rightValue.getType() instanceof BooleanType)){
-            throw new DifferentTypesExpressionError("Needed boolean type for logical expression");
+            throw new DifferentTypesExpressionError("Needed boolean type for logical innerExpression");
         }
         if(!leftValue.getType().equals(rightValue.getType())){
             throw new DifferentTypesExpressionError("Type mismatch in LogicalExpression");
@@ -57,6 +57,12 @@ public record LogicalExpression(IExpression leftExpression, IExpression rightExp
         else{
             throw new DifferentTypesExpressionError("first operand is not a boolean");
         }
+    }
+
+    @Override
+    public IExpression getNegation() {
+        return new LogicalExpression(leftExpression.getNegation(), rightExpression.getNegation(),
+                operation == 1 ? 2 : operation == 2 ? 1 : operation);
     }
 
     @Override

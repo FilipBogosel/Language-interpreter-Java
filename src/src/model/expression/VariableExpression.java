@@ -26,6 +26,11 @@ public record VariableExpression(String variableName) implements IExpression{
     }
 
     @Override
+    public IExpression getNegation() {
+        return null;
+    }
+
+    @Override
     public String toString() {
         return variableName;
     }

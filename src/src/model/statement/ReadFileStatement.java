@@ -18,7 +18,7 @@ public record ReadFileStatement(IExpression expression, String variableName) imp
     public ProgramState execute(ProgramState state)  {
         IValue val = expression.evaluate(state.symbolTable(), state.heapTable());
         if(!StringType.INSTANCE.equals(val.getType())) {
-            throw new DifferentTypesExpressionError("Read file statement must have as parameter a String value as result of expression");
+            throw new DifferentTypesExpressionError("Read file statement must have as parameter a String value as result of innerExpression");
         }
         StringValue strVal = (StringValue) val;
         if(!state.fileTable().isDefined(strVal.value())){
@@ -50,7 +50,7 @@ public record ReadFileStatement(IExpression expression, String variableName) imp
     public ISymbolTable<String, IType> typecheck(ISymbolTable<String, IType> typeEnvironment) {
         IType expType = expression.typecheck(typeEnvironment);
         if (!expType.equals(StringType.INSTANCE)) {
-            throw new DifferentTypesExpressionError("ReadFile stmt: expression is not a string");
+            throw new DifferentTypesExpressionError("ReadFile stmt: innerExpression is not a string");
         }
         IType varType = typeEnvironment.getValue(variableName);
         if (!varType.equals(IntType.INSTANCE)) {

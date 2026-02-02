@@ -14,7 +14,7 @@ public record ReadHeapExpression(IExpression expression) implements IExpression 
     public IValue evaluate(ISymbolTable<String, IValue> symbolTable, IHeapTable heapTable) {
         var value = expression.evaluate(symbolTable, heapTable);
         if(!(value.getType() instanceof RefType)){
-            throw new DifferentTypesExpressionError("ReadHeapExpression: expression is not of RefType");
+            throw new DifferentTypesExpressionError("ReadHeapExpression: innerExpression is not of RefType");
         }
         RefValue refValue = (RefValue) value;
         int address = refValue.address();
@@ -37,6 +37,11 @@ public record ReadHeapExpression(IExpression expression) implements IExpression 
             return reft.innerType();
         } else
             throw new DifferentTypesExpressionError("the rH argument is not a Ref Type");
+    }
+
+    @Override
+    public IExpression getNegation() {
+        return null;
     }
 
     @Override

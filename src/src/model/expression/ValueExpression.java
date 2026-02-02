@@ -22,6 +22,11 @@ public record ValueExpression(IValue value) implements IExpression {
     }
 
     @Override
+    public IExpression getNegation() {
+        return null;
+    }
+
+    @Override
     public String toString() {
         return value.toString();
     }

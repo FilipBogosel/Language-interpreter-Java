@@ -10,6 +10,8 @@ public record ProgramState(ISymbolTable<String, IValue> symbolTable,
                            IFileTable fileTable,
                            IHeapTable heapTable,
                            IStatement originalProgram,
+                           ISemaphoreTable semaphoreTable,
+                           ILockTable lockTable,
                            int id) {
     public static int lastId = 0;
 
@@ -18,7 +20,10 @@ public record ProgramState(ISymbolTable<String, IValue> symbolTable,
                         MyIList<IValue> outputList,
                         IFileTable fileTable,
                         IHeapTable heapTable,
-                        IStatement originalProgram, int id) {
+                        IStatement originalProgram,
+                        ISemaphoreTable semaphoreTable,
+                        ILockTable lockTable,
+                        int id) {
         this.symbolTable = symbolTable;
         this.executionStack = executionStack;
         this.outputList = outputList;
@@ -26,6 +31,8 @@ public record ProgramState(ISymbolTable<String, IValue> symbolTable,
         this.executionStack.push(this.originalProgram);
         this.fileTable = fileTable;
         this.heapTable = heapTable;
+        this.semaphoreTable = semaphoreTable;
+        this.lockTable = lockTable;
         this.id = id;
     }
 
@@ -37,6 +44,8 @@ public record ProgramState(ISymbolTable<String, IValue> symbolTable,
                 outputList.toString() + "\n"+
                 fileTable.toString() + "\n"+
                 heapTable.toString() + "\n" +
+                semaphoreTable.toString() + "\n" +
+                lockTable.toString() + "\n" +
                 "====================\n";
     }
 
