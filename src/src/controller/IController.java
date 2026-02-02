@@ -22,5 +22,7 @@ public interface IController {
     List<ProgramState> removeCompletedProgramStates(List<ProgramState> programStates);
     void oneStepForAllPrograms(List<ProgramState> programStates);
     List<IValue> getAllSymbolTableValues();
+    void oneStepForGUI();
 
+    void shutDownExecutor();
 }

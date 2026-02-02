@@ -1,9 +1,7 @@
 package controller;
 
 import model.state.IHeapTable;
-import model.state.MyIStack;
 import model.state.ProgramState;
-import model.statement.IStatement;
 import model.value.IValue;
 import model.value.RefValue;
 import repository.IRepository;
@@ -152,6 +150,42 @@ public class Controller implements IController {
         return getAllProgramStates().stream()
                 .flatMap(programState -> programState.symbolTable().getContent().values().stream())
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void oneStepForGUI() {
+        // Create the executor specifically for this step
+        executor = Executors.newFixedThreadPool(2);
+
+        // Remove completed programs from the repository
+        List<ProgramState> programStates = removeCompletedProgramStates(repository.getAllProgramStates());
+
+        if (!programStates.isEmpty()) {
+            IHeapTable commonHeapTable = programStates.getFirst().heapTable();
+            Map<Integer, IValue> garbageCollectedHeap = garbageCollector(
+                    getAllSymbolTableValues(),
+                    commonHeapTable.getContent()
+            );
+
+            commonHeapTable.setContent(garbageCollectedHeap);
+
+            oneStepForAllPrograms(programStates);
+
+            // 5. Remove any programs that finished during this step
+            programStates = removeCompletedProgramStates(repository.getAllProgramStates());
+        }
+
+        // Shutdown the executor so we don't leak threads
+        executor.shutdownNow();
+
+        repository.setProgramStates(programStates);
+    }
+
+    @Override
+    public void shutDownExecutor() {
+        if (executor != null && !executor.isShutdown()) {
+            executor.shutdownNow();
+        }
     }
 
 }

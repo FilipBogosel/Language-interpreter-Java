@@ -29,6 +29,11 @@ public class ListExecutionStack<T> implements MyIStack<T> {
     }
 
     @Override
+    public List<T> getContent() {
+        return this.statements;
+    }
+
+    @Override
     public String toString() {
         if (statements.isEmpty()) {
             return "Execution Stack: empty\n";

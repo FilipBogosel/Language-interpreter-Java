@@ -1,12 +1,15 @@
 package utils;
 
+import javafx.scene.control.Alert;
 import model.expression.*;
+import model.state.*;
 import model.statement.*;
 import model.type.BooleanType;
 import model.type.IntType;
 import model.type.RefType;
 import model.type.StringType;
 import model.value.BooleanValue;
+import model.value.IValue;
 import model.value.IntValue;
 import model.value.StringValue;
 
@@ -274,5 +277,21 @@ public class Utils {
         return examples;
     }
 
+    public static void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    public static ProgramState createProgramState(IStatement statement) {
+        MyIStack<IStatement> executionStack = new ListExecutionStack<>();
+        ISymbolTable<String, IValue> symbolTable = new MapSymbolTable();
+        MyIList<model.value.IValue> outputList = new ListOutput<>();
+        IFileTable fileTable = new MapFileTable();
+        IHeapTable heapTable = new MapHeapTable();
+        int id = ProgramState.getAndIncrementLastId();
+        return new ProgramState(symbolTable, executionStack, outputList,fileTable, heapTable, statement,id);
+    }
 
 }

@@ -25,5 +25,9 @@ public class ListOutput<T> implements MyIList<T> {
         }
         return sb.toString();
     }
+    @Override
+    public List<T> getContent() {
+        return outputList;
+    }
 
 }

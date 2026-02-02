@@ -50,7 +50,7 @@ public record ProgramState(ISymbolTable<String, IValue> symbolTable,
 
     public ProgramState oneStep() {
         if(executionStack.isEmpty()){
-            throw new EmptyExecutionStackError("Error in oneStep: executionStack is empty");
+            throw new EmptyExecutionStackError("Error in oneStepForGUI: executionStack is empty");
         }
         IStatement currentStatement = executionStack.pop();
         return currentStatement.execute(this);

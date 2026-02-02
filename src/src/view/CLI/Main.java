@@ -28,7 +28,7 @@ public class Main {
 
                 ISymbolTable<String, IType> typeEnvironment = new MapTypeEnvironment();
                 statement.typecheck(typeEnvironment);
-                ProgramState programState = createProgramState(statement);
+                ProgramState programState = Utils.createProgramState(statement);
 
                 String logFilePath = "log" + exampleNumber + ".txt";
                 IRepository repository = new Repository(logFilePath);
@@ -53,16 +53,6 @@ public class Main {
         menu.show();
     }
 
-    private static ProgramState createProgramState(IStatement statement) {
-        // Create fresh ADTs for the new ProgramState
-        MyIStack<IStatement> executionStack = new ListExecutionStack<>();
-        ISymbolTable<String, model.value.IValue> symbolTable = new MapSymbolTable();
-        MyIList<model.value.IValue> outputList = new ListOutput<>();
-        IFileTable fileTable = new MapFileTable();
-        IHeapTable heapTable = new MapHeapTable();
-        int id = ProgramState.getAndIncrementLastId();
 
-        return new ProgramState(symbolTable, executionStack, outputList,fileTable, heapTable, statement,id);
-    }
 
 }

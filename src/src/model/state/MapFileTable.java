@@ -35,6 +35,11 @@ public class MapFileTable implements IFileTable {
     }
 
     @Override
+    public Map<String, BufferedReader> getContent() {
+        return this.fileTable;
+    }
+
+    @Override
     public String toString() {
         if (fileTable.isEmpty()) {
             return "File Table: empty\n";
