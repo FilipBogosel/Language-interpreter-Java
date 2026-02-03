@@ -12,6 +12,7 @@ public record ProgramState(ISymbolTable<String, IValue> symbolTable,
                            IStatement originalProgram,
                            ISemaphoreTable semaphoreTable,
                            ILockTable lockTable,
+                           IBarrierTable barrierTable,
                            int id) {
     public static int lastId = 0;
 
@@ -23,6 +24,7 @@ public record ProgramState(ISymbolTable<String, IValue> symbolTable,
                         IStatement originalProgram,
                         ISemaphoreTable semaphoreTable,
                         ILockTable lockTable,
+                        IBarrierTable barrierTable,
                         int id) {
         this.symbolTable = symbolTable;
         this.executionStack = executionStack;
@@ -33,6 +35,7 @@ public record ProgramState(ISymbolTable<String, IValue> symbolTable,
         this.heapTable = heapTable;
         this.semaphoreTable = semaphoreTable;
         this.lockTable = lockTable;
+        this.barrierTable = barrierTable;
         this.id = id;
     }
 

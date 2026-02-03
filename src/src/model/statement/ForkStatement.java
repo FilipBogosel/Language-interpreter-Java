@@ -8,7 +8,16 @@ public record ForkStatement(IStatement innerStatement) implements IStatement {
     public ProgramState execute(ProgramState state) {
         MyIStack<IStatement> childExecutionStack = new ListExecutionStack<>();
         int newId = ProgramState.getAndIncrementLastId();
-        return new ProgramState(state.symbolTable().deepCopy(), childExecutionStack, state.outputList(),  state.fileTable(), state.heapTable(), innerStatement, state.semaphoreTable(), state.lockTable(), newId);
+        return new ProgramState(state.symbolTable().deepCopy(),
+                childExecutionStack,
+                state.outputList(),
+                state.fileTable(),
+                state.heapTable(),
+                innerStatement,
+                state.semaphoreTable(),
+                state.lockTable(),
+                state.barrierTable(),
+                newId);
     }
 
     @Override

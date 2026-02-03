@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.beans.property.SimpleStringProperty; // Import this!
 import javafx.util.Pair;
+import model.state.IBarrierTable;
 import model.state.ILockTable;
 import model.state.ISemaphoreTable;
 import model.state.ProgramState;
@@ -63,6 +64,16 @@ public class ProgramExecutorController {
     private TableColumn<Pair<Integer, Integer>, String> lockLocationColumn;
     @FXML
     private TableColumn<Pair<Integer, Integer>, String> lockValueColumn;
+
+    @FXML
+    private TableView<Map.Entry<Integer, javafx.util.Pair<Integer, List<Integer>>>> barrierTableView;
+    @FXML
+    private TableColumn<Map.Entry<Integer, javafx.util.Pair<Integer, List<Integer>>>, String> barrierIndexColumn;
+    @FXML
+    private TableColumn<Map.Entry<Integer, javafx.util.Pair<Integer, List<Integer>>>, String> barrierValueColumn;
+    @FXML
+    private TableColumn<Map.Entry<Integer, javafx.util.Pair<Integer, List<Integer>>>, String> barrierListColumn;
+
     private Controller controller;
 
 
@@ -73,6 +84,7 @@ public class ProgramExecutorController {
         formatSymbolTableView();
         formatSemaphoreTableView();
         formatLockTableView();
+        formatBarrierTableView();
         setProgramStateListViewListener();
     }
 
@@ -116,6 +128,15 @@ public class ProgramExecutorController {
                 -> new SimpleStringProperty(p.getValue().getValue().toString()));
     }
 
+    private void formatBarrierTableView(){
+        barrierIndexColumn.setCellValueFactory(p
+                -> new SimpleStringProperty(p.getValue().getKey().toString()));
+        barrierValueColumn.setCellValueFactory(p
+                -> new SimpleStringProperty(p.getValue().getValue().getKey().toString()));
+        barrierListColumn.setCellValueFactory(p
+                -> new SimpleStringProperty(p.getValue().getValue().getValue().toString()));
+    }
+
     @FXML
     public void runOneStep(MouseEvent event) {
         if (controller == null) {
@@ -125,18 +146,27 @@ public class ProgramExecutorController {
 
         try {
             List<ProgramState> programStates = controller.getAllProgramStates();
-            if (!programStates.isEmpty()) {
+
+            // Filter out completed programs to see if there's work to do
+            List<ProgramState> activeProgramStates = programStates.stream()
+                    .filter(ProgramState::isNotCompleted)
+                    .toList();
+
+            if (!activeProgramStates.isEmpty()) {
                 controller.oneStepForGUI();
-                populate();
+                populate(); // Update UI after step
             } else {
                 Utils.showAlert("Info", "Program finished");
+                // Still populate to show final state
+                populate();
             }
 
         } catch (Exception e) {
             Utils.showAlert("Error", e.getMessage());
-            e.printStackTrace(); // Good for debugging
+            e.printStackTrace();
         }
     }
+
 
 
     public void setController(Controller controller) {
@@ -172,6 +202,7 @@ public class ProgramExecutorController {
         populateExecutionStack();
         populateSemaphoreTable();
         populateLockTable();
+        populateBarrierTable();
     }
 
 
@@ -204,15 +235,22 @@ public class ProgramExecutorController {
     }
 
     private void populateOutput() {
-        ProgramState program = getCurrentProgramState();
-        if (program == null) return;
+        if (controller.getAllProgramStates().isEmpty()) {
+            // No program states left, but we might have output from completed execution
+            // Keep the existing output displayed
+            return;
+        }
 
-        List<String> output = program.outputList().getContent().stream()
+        // Get the first program state - all threads share the same output list
+        ProgramState programState = controller.getAllProgramStates().getFirst();
+
+        List<String> output = programState.outputList().getContent().stream()
                 .map(IValue::toString)
                 .collect(Collectors.toList());
 
         outputListView.setItems(FXCollections.observableArrayList(output));
     }
+
 
     private void populateFileTable() {
         ProgramState program = getCurrentProgramState();
@@ -274,5 +312,18 @@ public class ProgramExecutorController {
 
         lockTableView.setItems(FXCollections.observableArrayList(lockList));
         lockTableView.refresh();
+    }
+
+    private void populateBarrierTable() {
+        ProgramState programState = getCurrentProgramState();
+        if (programState == null) return;
+
+        IBarrierTable barrierTable = programState.barrierTable();
+        List<Map.Entry<Integer, javafx.util.Pair<Integer, List<Integer>>>> barrierList = new ArrayList<>();
+
+        barrierList.addAll(barrierTable.getContent().entrySet());
+
+        barrierTableView.setItems(FXCollections.observableArrayList(barrierList));
+        barrierTableView.refresh();
     }
 }

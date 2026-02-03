@@ -37,6 +37,7 @@ public class Utils {
         examples.add(getForExample());
         examples.add(getLockExample());
         examples.add(getRepeatUntilExample());
+        examples.add(getCyclicBarrierExample());
 
         return examples;
     }
@@ -564,6 +565,67 @@ public class Utils {
         );
     }
 
+    //Example 18: CyclicBarrier example
+    private static IStatement getCyclicBarrierExample() {
+        return new CompoundStatement(
+                new VariableDeclarationStatement(new RefType(IntType.INSTANCE), "v1"),
+                new CompoundStatement(
+                        new VariableDeclarationStatement(new RefType(IntType.INSTANCE), "v2"),
+                        new CompoundStatement(
+                                new VariableDeclarationStatement(new RefType(IntType.INSTANCE), "v3"),
+                                new CompoundStatement(
+                                        new VariableDeclarationStatement(IntType.INSTANCE, "cnt"),
+                                        new CompoundStatement(
+                                                new HeapAllocationStatement("v1", new ValueExpression(new IntValue(2))),
+                                                new CompoundStatement(
+                                                        new HeapAllocationStatement("v2", new ValueExpression(new IntValue(3))),
+                                                        new CompoundStatement(
+                                                                new HeapAllocationStatement("v3", new ValueExpression(new IntValue(4))),
+                                                                new CompoundStatement(
+                                                                        // newBarrier(cnt, rH(v2)); -> capacity is 3
+                                                                        new NewBarrierStatement("cnt", new ReadHeapExpression(new VariableExpression("v2"))),
+                                                                        new CompoundStatement(
+                                                                                // Fork 1: await(cnt); wh(v1,rh(v1)*10); print(rh(v1));
+                                                                                new ForkStatement(
+                                                                                        new CompoundStatement(
+                                                                                                new AwaitStatement("cnt"),
+                                                                                                new CompoundStatement(
+                                                                                                        new HeapWriteStatement("v1", new ArithmeticExpression(new ReadHeapExpression(new VariableExpression("v1")), new ValueExpression(new IntValue(10)), 3)), // * 10
+                                                                                                        new PrintStatement(new ReadHeapExpression(new VariableExpression("v1")))
+                                                                                                )
+                                                                                        )
+                                                                                ),
+                                                                                new CompoundStatement(
+                                                                                        // Fork 2: await(cnt); wh(v2,rh(v2)*10); wh(v2,rh(v2)*10); print(rh(v2));
+                                                                                        new ForkStatement(
+                                                                                                new CompoundStatement(
+                                                                                                        new AwaitStatement("cnt"),
+                                                                                                        new CompoundStatement(
+                                                                                                                new HeapWriteStatement("v2", new ArithmeticExpression(new ReadHeapExpression(new VariableExpression("v2")), new ValueExpression(new IntValue(10)), 3)), // 3 * 10 = 30
+                                                                                                                new CompoundStatement(
+                                                                                                                        new HeapWriteStatement("v2", new ArithmeticExpression(new ReadHeapExpression(new VariableExpression("v2")), new ValueExpression(new IntValue(10)), 3)), // 30 * 10 = 300
+                                                                                                                        new PrintStatement(new ReadHeapExpression(new VariableExpression("v2")))
+                                                                                                                )
+                                                                                                        )
+                                                                                                )
+                                                                                        ),
+                                                                                        // Main Thread: await(cnt); print(rh(v3));
+                                                                                        new CompoundStatement(
+                                                                                                new AwaitStatement("cnt"),
+                                                                                                new PrintStatement(new ReadHeapExpression(new VariableExpression("v3")))
+                                                                                        )
+                                                                                )
+                                                                        )
+                                                                )
+                                                        )
+                                                )
+                                        )
+                                )
+                        )
+                )
+        );
+    }
+
     public static void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
@@ -579,8 +641,19 @@ public class Utils {
         IHeapTable heapTable = new MapHeapTable();
         ISemaphoreTable semaphoreTable = new SemaphoreTable();
         ILockTable lockTable = new LockTable();
+        IBarrierTable barrierTable = new BarrierTable();
         int id = ProgramState.getAndIncrementLastId();
-        return new ProgramState(symbolTable, executionStack, outputList, fileTable, heapTable, statement, semaphoreTable, lockTable, id);
+        return new ProgramState(
+                symbolTable,
+                executionStack,
+                outputList,
+                fileTable,
+                heapTable,
+                statement,
+                semaphoreTable,
+                lockTable,
+                barrierTable,
+                id);
     }
 
     

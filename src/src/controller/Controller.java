@@ -157,11 +157,14 @@ public class Controller implements IController {
         // Create the executor specifically for this step
         executor = Executors.newFixedThreadPool(2);
 
-        // Remove completed programs from the repository
-        List<ProgramState> programStates = removeCompletedProgramStates(repository.getAllProgramStates());
+        // Get all program states (including completed ones for now)
+        List<ProgramState> allProgramStates = repository.getAllProgramStates();
 
-        if (!programStates.isEmpty()) {
-            IHeapTable commonHeapTable = programStates.getFirst().heapTable();
+        // Filter to get only active programs for execution
+        List<ProgramState> activeProgramStates = removeCompletedProgramStates(allProgramStates);
+
+        if (!activeProgramStates.isEmpty()) {
+            IHeapTable commonHeapTable = activeProgramStates.getFirst().heapTable();
             Map<Integer, IValue> garbageCollectedHeap = garbageCollector(
                     getAllSymbolTableValues(),
                     commonHeapTable.getContent()
@@ -169,16 +172,23 @@ public class Controller implements IController {
 
             commonHeapTable.setContent(garbageCollectedHeap);
 
-            oneStepForAllPrograms(programStates);
+            oneStepForAllPrograms(activeProgramStates);
 
-            // 5. Remove any programs that finished during this step
-            programStates = removeCompletedProgramStates(repository.getAllProgramStates());
+            // After execution, update the repository with all states (including newly completed ones)
+            // But keep at least one state for UI access to shared structures
+            List<ProgramState> updatedStates = repository.getAllProgramStates();
+            List<ProgramState> remainingActive = removeCompletedProgramStates(updatedStates);
+
+            // If all states completed, keep the first completed state for UI access
+            if (remainingActive.isEmpty() && !updatedStates.isEmpty()) {
+                repository.setProgramStates(List.of(updatedStates.getFirst()));
+            } else {
+                repository.setProgramStates(remainingActive);
+            }
         }
 
         // Shutdown the executor so we don't leak threads
         executor.shutdownNow();
-
-        repository.setProgramStates(programStates);
     }
 
     @Override
