@@ -38,7 +38,7 @@ public record AssignmentStatement(String variableName, IExpression expression) i
 
     @Override
     public ISymbolTable<String, IType> typecheck(ISymbolTable<String, IType> typeEnvironment) {
-        IType variableType = typeEnvironment.getValue(variableName);
+        IType variableType = typeEnvironment.getType(variableName);
         IType expressionType = expression.typecheck(typeEnvironment);
         if (variableType.equals(expressionType)) {
             return typeEnvironment;

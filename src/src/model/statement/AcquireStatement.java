@@ -65,7 +65,7 @@ public record AcquireStatement(String variable) implements IStatement {
 
     @Override
     public ISymbolTable<String, IType> typecheck(ISymbolTable<String, IType> typeEnvironment) {
-        if (typeEnvironment.getValue(variable).equals(IntType.INSTANCE)) {
+        if (typeEnvironment.getType(variable).equals(IntType.INSTANCE)) {
             return typeEnvironment;
         } else {
             throw new DifferentTypesExpressionError("Acquire variable must be int");

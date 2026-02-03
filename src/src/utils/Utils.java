@@ -692,6 +692,7 @@ public class Utils {
                                                         new CompoundStatement(
                                                                 new HeapAllocationStatement("v3", new ValueExpression(new IntValue(4))),
                                                                 new CompoundStatement(
+                                                                        // newLatch(cnt, rH(v2))
                                                                         new NewLatchStatement("cnt", new ReadHeapExpression(new VariableExpression("v2"))),
                                                                         new CompoundStatement(
                                                                                 new ForkStatement(
@@ -724,7 +725,8 @@ public class Utils {
                                                                                                         )
                                                                                                 ),
                                                                                                 new CompoundStatement(
-                                                                                                        new AwaitStatement("cnt"),
+                                                                                                        // UPDATED HERE:
+                                                                                                        new LatchAwaitStatement("cnt"),
                                                                                                         new CompoundStatement(
                                                                                                                 new PrintStatement(new ValueExpression(new IntValue(100))),
                                                                                                                 new CompoundStatement(

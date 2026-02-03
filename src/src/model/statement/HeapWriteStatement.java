@@ -47,7 +47,7 @@ public record HeapWriteStatement(String varName, IExpression expression) impleme
 
     @Override
     public ISymbolTable<String, IType> typecheck(ISymbolTable<String, IType> typeEnvironment) {
-        IType variableType = typeEnvironment.getValue(varName);
+        IType variableType = typeEnvironment.getType(varName);
         IType expType = expression.typecheck(typeEnvironment);
         if (variableType instanceof RefType(IType innerType)) {
             if (innerType.equals(expType)) {

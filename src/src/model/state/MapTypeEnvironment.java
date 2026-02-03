@@ -20,7 +20,7 @@ public class MapTypeEnvironment implements ISymbolTable<String, IType>{
 
     @Override
     public IType getType(String variableName) {
-        return null;
+        return symbolTable.get(variableName);
     }
     @Override
     public void declareVariable(String variableName, IType type) {

@@ -37,7 +37,7 @@ public record HeapAllocationStatement(String variableName, IExpression expressio
 
     @Override
     public ISymbolTable<String, IType> typecheck(ISymbolTable<String, IType> typeEnvironment) {
-        IType variableType = typeEnvironment.getValue(variableName);
+        IType variableType = typeEnvironment.getType(variableName);
         IType expType = expression.typecheck(typeEnvironment);
         if (variableType.equals(new RefType(expType)))
             return typeEnvironment;

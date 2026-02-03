@@ -32,7 +32,10 @@ public record ConditionalAssignmentStatement(String variableName, IExpression ex
         if(!type1.equals(BooleanType.INSTANCE)) {
             throw new DifferentTypesExpressionError("Expression used for conditional assignment is not boolean!");
         }
-        if(!type2.equals(type3) || !typeEnvironment.getType(variableName).equals(type1)) {
+
+        IType variableType = typeEnvironment.getType(variableName);
+
+        if(!type2.equals(type3) || !variableType.equals(type2)) {
             throw new DifferentTypesExpressionError("Expressions used for conditional assignment don't have the same type!");
         }
         return typeEnvironment;

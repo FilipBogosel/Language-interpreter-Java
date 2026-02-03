@@ -49,7 +49,7 @@ public record LockStatement(String variable) implements IStatement {
 
     @Override
     public ISymbolTable<String, IType> typecheck(ISymbolTable<String, IType> typeEnvironment) {
-        if (typeEnvironment.getValue(variable).equals(IntType.INSTANCE))
+        if (typeEnvironment.getType(variable).equals(IntType.INSTANCE))
             return typeEnvironment;
         else
             throw new DifferentTypesExpressionError("Variable must be of type int");

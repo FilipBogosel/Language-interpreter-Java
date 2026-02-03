@@ -52,7 +52,7 @@ public record ReadFileStatement(IExpression expression, String variableName) imp
         if (!expType.equals(StringType.INSTANCE)) {
             throw new DifferentTypesExpressionError("ReadFile stmt: innerExpression is not a string");
         }
-        IType varType = typeEnvironment.getValue(variableName);
+        IType varType = typeEnvironment.getType(variableName);
         if (!varType.equals(IntType.INSTANCE)) {
             throw new DifferentTypesExpressionError("ReadFile stmt: variable is not an integer");
         }

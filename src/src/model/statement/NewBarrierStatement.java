@@ -51,7 +51,7 @@ public record NewBarrierStatement(String variable, IExpression expression) imple
 
     @Override
     public ISymbolTable<String, IType> typecheck(ISymbolTable<String, IType> typeEnvironment) {
-        if (typeEnvironment.getValue(variable).equals(IntType.INSTANCE) &&
+        if (typeEnvironment.getType(variable).equals(IntType.INSTANCE) &&
                 expression.typecheck(typeEnvironment).equals(IntType.INSTANCE)) {
             return typeEnvironment;
         } else {

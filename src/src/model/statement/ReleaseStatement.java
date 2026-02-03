@@ -57,7 +57,7 @@ public record ReleaseStatement(String variable) implements IStatement {
 
     @Override
     public ISymbolTable<String, IType> typecheck(ISymbolTable<String, IType> typeEnvironment) {
-        if (typeEnvironment.getValue(variable).equals(IntType.INSTANCE)) {
+        if (typeEnvironment.getType(variable).equals(IntType.INSTANCE)) {
             return typeEnvironment;
         } else {
             throw new DifferentTypesExpressionError("Release variable must be int");

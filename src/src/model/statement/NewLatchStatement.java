@@ -48,7 +48,7 @@ public record NewLatchStatement(String variable, IExpression expression) impleme
 
     @Override
     public ISymbolTable<String, IType> typecheck(ISymbolTable<String, IType> typeEnvironment) {
-        if (typeEnvironment.getValue(variable).equals(IntType.INSTANCE) && expression.typecheck(typeEnvironment).equals(IntType.INSTANCE)) {
+        if (typeEnvironment.getType(variable).equals(IntType.INSTANCE) && expression.typecheck(typeEnvironment).equals(IntType.INSTANCE)) {
             return typeEnvironment;
         } else {
             throw new DifferentTypesExpressionError("Latch type check failed");

@@ -22,7 +22,7 @@ public record VariableExpression(String variableName) implements IExpression{
 
     @Override
     public IType typecheck(ISymbolTable<String, IType> typeEnvironment) {
-        return typeEnvironment.getValue(variableName);
+        return typeEnvironment.getType(variableName);
     }
 
     @Override
