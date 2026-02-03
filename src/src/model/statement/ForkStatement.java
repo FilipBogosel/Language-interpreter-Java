@@ -17,6 +17,7 @@ public record ForkStatement(IStatement innerStatement) implements IStatement {
                 state.semaphoreTable(),
                 state.lockTable(),
                 state.barrierTable(),
+                state.latchTable(),
                 newId);
     }
 

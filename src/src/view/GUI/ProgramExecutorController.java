@@ -6,10 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.beans.property.SimpleStringProperty; // Import this!
 import javafx.util.Pair;
-import model.state.IBarrierTable;
-import model.state.ILockTable;
-import model.state.ISemaphoreTable;
-import model.state.ProgramState;
+import model.state.*;
 import model.statement.IStatement;
 import model.value.IValue;
 import utils.Utils;
@@ -20,6 +17,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ProgramExecutorController {
+
 
     @FXML
     private TextField numberOfProgramStatesTextField; // Renamed to match FXML
@@ -74,6 +72,13 @@ public class ProgramExecutorController {
     @FXML
     private TableColumn<Map.Entry<Integer, javafx.util.Pair<Integer, List<Integer>>>, String> barrierListColumn;
 
+    @FXML
+    private TableView<Pair<Integer, Integer>> latchTableView;
+    @FXML
+    private TableColumn<Pair<Integer, Integer>, String> latchLocationColumn;
+    @FXML
+    private TableColumn<Pair<Integer, Integer>, String> latchValueColumn;
+
     private Controller controller;
 
 
@@ -85,6 +90,7 @@ public class ProgramExecutorController {
         formatSemaphoreTableView();
         formatLockTableView();
         formatBarrierTableView();
+        formatCountDownLatchTableView();
         setProgramStateListViewListener();
     }
 
@@ -135,6 +141,13 @@ public class ProgramExecutorController {
                 -> new SimpleStringProperty(p.getValue().getValue().getKey().toString()));
         barrierListColumn.setCellValueFactory(p
                 -> new SimpleStringProperty(p.getValue().getValue().getValue().toString()));
+    }
+
+    private void formatCountDownLatchTableView(){
+        latchLocationColumn.setCellValueFactory(p
+                -> new SimpleStringProperty(p.getValue().getKey().toString()));
+        latchValueColumn.setCellValueFactory(p
+                -> new SimpleStringProperty(p.getValue().getValue().toString()));
     }
 
     @FXML
@@ -203,6 +216,7 @@ public class ProgramExecutorController {
         populateSemaphoreTable();
         populateLockTable();
         populateBarrierTable();
+        populateLatchTable();
     }
 
 
@@ -325,5 +339,23 @@ public class ProgramExecutorController {
 
         barrierTableView.setItems(FXCollections.observableArrayList(barrierList));
         barrierTableView.refresh();
+    }
+
+    private void populateLatchTable() {
+        ProgramState programState = getCurrentProgramState();
+        if (programState == null) {
+            return;
+        }
+
+        ILatchTable latchTable = programState.latchTable();
+        List<Pair<Integer, Integer>> latchList = new ArrayList<>();
+
+        // Convert the LatchTable Map to a List of Pairs for the GUI
+        for (Map.Entry<Integer, Integer> entry : latchTable.getContent().entrySet()) {
+            latchList.add(new Pair<>(entry.getKey(), entry.getValue()));
+        }
+
+        latchTableView.setItems(FXCollections.observableArrayList(latchList));
+        latchTableView.refresh();
     }
 }

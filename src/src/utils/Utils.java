@@ -38,6 +38,8 @@ public class Utils {
         examples.add(getLockExample());
         examples.add(getRepeatUntilExample());
         examples.add(getCyclicBarrierExample());
+        examples.add(getConditionalAssignmentExample());
+        examples.add(getCountDownLatchExample());
 
         return examples;
     }
@@ -626,6 +628,124 @@ public class Utils {
         );
     }
 
+    //Example 19: ConditionalAssignment
+    private static IStatement getConditionalAssignmentExample() {
+        return new CompoundStatement(
+                new VariableDeclarationStatement(new RefType(IntType.INSTANCE), "a"),
+                new CompoundStatement(
+                        new VariableDeclarationStatement(new RefType(IntType.INSTANCE), "b"),
+                        new CompoundStatement(
+                                new VariableDeclarationStatement(IntType.INSTANCE, "v"),
+                                new CompoundStatement(
+                                        new HeapAllocationStatement("a", new ValueExpression(new IntValue(0))),
+                                        new CompoundStatement(
+                                                new HeapAllocationStatement("b", new ValueExpression(new IntValue(0))),
+                                                new CompoundStatement(
+                                                        new HeapWriteStatement("a", new ValueExpression(new IntValue(1))),
+                                                        new CompoundStatement(
+                                                                new HeapWriteStatement("b", new ValueExpression(new IntValue(2))),
+                                                                new CompoundStatement(
+                                                                        new ConditionalAssignmentStatement("v",
+                                                                                new RelationalExpression(new ReadHeapExpression(new VariableExpression("a")), new ReadHeapExpression(new VariableExpression("b")), 1), // <
+                                                                                new ValueExpression(new IntValue(100)),
+                                                                                new ValueExpression(new IntValue(200))
+                                                                        ),
+                                                                        new CompoundStatement(
+                                                                                new PrintStatement(new VariableExpression("v")),
+                                                                                new CompoundStatement(
+                                                                                        new ConditionalAssignmentStatement("v",
+                                                                                                new RelationalExpression(
+                                                                                                        new ArithmeticExpression(new ReadHeapExpression(new VariableExpression("b")), new ValueExpression(new IntValue(2)), 2), // - 2
+                                                                                                        new ReadHeapExpression(new VariableExpression("a")),
+                                                                                                        5 // >
+                                                                                                ),
+                                                                                                new ValueExpression(new IntValue(100)),
+                                                                                                new ValueExpression(new IntValue(200))
+                                                                                        ),
+                                                                                        new PrintStatement(new VariableExpression("v"))
+                                                                                )
+                                                                        )
+                                                                )
+                                                        )
+                                                )
+                                        )
+                                )
+                        )
+                )
+        );
+    }
+
+    //Example 20: CountDownLatch
+    private static IStatement getCountDownLatchExample() {
+        return new CompoundStatement(
+                new VariableDeclarationStatement(new RefType(IntType.INSTANCE), "v1"),
+                new CompoundStatement(
+                        new VariableDeclarationStatement(new RefType(IntType.INSTANCE), "v2"),
+                        new CompoundStatement(
+                                new VariableDeclarationStatement(new RefType(IntType.INSTANCE), "v3"),
+                                new CompoundStatement(
+                                        new VariableDeclarationStatement(IntType.INSTANCE, "cnt"),
+                                        new CompoundStatement(
+                                                new HeapAllocationStatement("v1", new ValueExpression(new IntValue(2))),
+                                                new CompoundStatement(
+                                                        new HeapAllocationStatement("v2", new ValueExpression(new IntValue(3))),
+                                                        new CompoundStatement(
+                                                                new HeapAllocationStatement("v3", new ValueExpression(new IntValue(4))),
+                                                                new CompoundStatement(
+                                                                        new NewLatchStatement("cnt", new ReadHeapExpression(new VariableExpression("v2"))),
+                                                                        new CompoundStatement(
+                                                                                new ForkStatement(
+                                                                                        new CompoundStatement(
+                                                                                                new HeapWriteStatement("v1", new ArithmeticExpression(new ReadHeapExpression(new VariableExpression("v1")), new ValueExpression(new IntValue(10)), 3)),
+                                                                                                new CompoundStatement(
+                                                                                                        new PrintStatement(new ReadHeapExpression(new VariableExpression("v1"))),
+                                                                                                        new CountDownStatement("cnt")
+                                                                                                )
+                                                                                        )
+                                                                                ),
+                                                                                new CompoundStatement(
+                                                                                        new ForkStatement(
+                                                                                                new CompoundStatement(
+                                                                                                        new HeapWriteStatement("v2", new ArithmeticExpression(new ReadHeapExpression(new VariableExpression("v2")), new ValueExpression(new IntValue(10)), 3)),
+                                                                                                        new CompoundStatement(
+                                                                                                                new PrintStatement(new ReadHeapExpression(new VariableExpression("v2"))),
+                                                                                                                new CountDownStatement("cnt")
+                                                                                                        )
+                                                                                                )
+                                                                                        ),
+                                                                                        new CompoundStatement(
+                                                                                                new ForkStatement(
+                                                                                                        new CompoundStatement(
+                                                                                                                new HeapWriteStatement("v3", new ArithmeticExpression(new ReadHeapExpression(new VariableExpression("v3")), new ValueExpression(new IntValue(10)), 3)),
+                                                                                                                new CompoundStatement(
+                                                                                                                        new PrintStatement(new ReadHeapExpression(new VariableExpression("v3"))),
+                                                                                                                        new CountDownStatement("cnt")
+                                                                                                                )
+                                                                                                        )
+                                                                                                ),
+                                                                                                new CompoundStatement(
+                                                                                                        new AwaitStatement("cnt"),
+                                                                                                        new CompoundStatement(
+                                                                                                                new PrintStatement(new ValueExpression(new IntValue(100))),
+                                                                                                                new CompoundStatement(
+                                                                                                                        new CountDownStatement("cnt"),
+                                                                                                                        new PrintStatement(new ValueExpression(new IntValue(100)))
+                                                                                                                )
+                                                                                                        )
+                                                                                                )
+                                                                                        )
+                                                                                )
+                                                                        )
+                                                                )
+                                                        )
+                                                )
+                                        )
+                                )
+                        )
+                )
+        );
+    }
+
     public static void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
@@ -642,6 +762,7 @@ public class Utils {
         ISemaphoreTable semaphoreTable = new SemaphoreTable();
         ILockTable lockTable = new LockTable();
         IBarrierTable barrierTable = new BarrierTable();
+        ILatchTable latchTable = new LatchTable();
         int id = ProgramState.getAndIncrementLastId();
         return new ProgramState(
                 symbolTable,
@@ -653,6 +774,7 @@ public class Utils {
                 semaphoreTable,
                 lockTable,
                 barrierTable,
+                latchTable,
                 id);
     }
 
