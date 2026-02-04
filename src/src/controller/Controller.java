@@ -154,13 +154,10 @@ public class Controller implements IController {
 
     @Override
     public void oneStepForGUI() {
-        // Create the executor specifically for this step
         executor = Executors.newFixedThreadPool(2);
 
-        // Get all program states (including completed ones for now)
         List<ProgramState> allProgramStates = repository.getAllProgramStates();
 
-        // Filter to get only active programs for execution
         List<ProgramState> activeProgramStates = removeCompletedProgramStates(allProgramStates);
 
         if (!activeProgramStates.isEmpty()) {
@@ -171,23 +168,9 @@ public class Controller implements IController {
             );
 
             commonHeapTable.setContent(garbageCollectedHeap);
-
             oneStepForAllPrograms(activeProgramStates);
-
-            // After execution, update the repository with all states (including newly completed ones)
-            // But keep at least one state for UI access to shared structures
-            List<ProgramState> updatedStates = repository.getAllProgramStates();
-            List<ProgramState> remainingActive = removeCompletedProgramStates(updatedStates);
-
-            // If all states completed, keep the first completed state for UI access
-            if (remainingActive.isEmpty() && !updatedStates.isEmpty()) {
-                repository.setProgramStates(List.of(updatedStates.getFirst()));
-            } else {
-                repository.setProgramStates(remainingActive);
-            }
         }
 
-        // Shutdown the executor so we don't leak threads
         executor.shutdownNow();
     }
 

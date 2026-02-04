@@ -160,18 +160,26 @@ public class ProgramExecutorController {
         try {
             List<ProgramState> programStates = controller.getAllProgramStates();
 
-            // Filter out completed programs to see if there's work to do
+            if (programStates.isEmpty()) {
+                Utils.showAlert("Info", "Program finished");
+                return;
+            }
+
+            // Update output before filtering to ensure it's captured even if all programs complete
+            List<String> output = programStates.getFirst().outputList().getContent().stream()
+                    .map(IValue::toString)
+                    .collect(Collectors.toList());
+            outputListView.setItems(FXCollections.observableArrayList(output));
+
             List<ProgramState> activeProgramStates = programStates.stream()
                     .filter(ProgramState::isNotCompleted)
                     .toList();
 
             if (!activeProgramStates.isEmpty()) {
                 controller.oneStepForGUI();
-                populate(); // Update UI after step
+                populate();
             } else {
                 Utils.showAlert("Info", "Program finished");
-                // Still populate to show final state
-                populate();
             }
 
         } catch (Exception e) {
@@ -241,7 +249,7 @@ public class ProgramExecutorController {
         }
 
         List<String> stackList = new ArrayList<>();
-        for (IStatement statement : program.executionStack().getContent().reversed()) {
+        for (IStatement statement : program.executionStack().getContent()) {
             stackList.add(statement.toString());
         }
 
@@ -250,8 +258,6 @@ public class ProgramExecutorController {
 
     private void populateOutput() {
         if (controller.getAllProgramStates().isEmpty()) {
-            // No program states left, but we might have output from completed execution
-            // Keep the existing output displayed
             return;
         }
 

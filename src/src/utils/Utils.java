@@ -40,6 +40,9 @@ public class Utils {
         examples.add(getCyclicBarrierExample());
         examples.add(getConditionalAssignmentExample());
         examples.add(getCountDownLatchExample());
+        examples.add(getSleepExample1());
+        examples.add(getSleepExample2());
+        examples.add(getWaitExample());
 
         return examples;
     }
@@ -741,6 +744,79 @@ public class Utils {
                                                                 )
                                                         )
                                                 )
+                                        )
+                                )
+                        )
+                )
+        );
+    }
+
+    //Example 21: Sleep example 1
+    private static IStatement getSleepExample1(){
+        return new CompoundStatement(
+                new VariableDeclarationStatement(IntType.INSTANCE, "v"),
+                new CompoundStatement(
+                        new AssignmentStatement("v", new ValueExpression(new IntValue(0))),
+                        new CompoundStatement(
+                                new WhileStatement(
+                                        new RelationalExpression(new VariableExpression("v"), new ValueExpression(new IntValue(3)), 1), // v < 3
+                                        new CompoundStatement(
+                                                new ForkStatement(
+                                                        new CompoundStatement(
+                                                                new PrintStatement(new VariableExpression("v")),
+                                                                new AssignmentStatement("v", new ArithmeticExpression(new VariableExpression("v"), new ValueExpression(new IntValue(1)), 1)) // v + 1
+                                                        )
+                                                ),
+                                                new AssignmentStatement("v", new ArithmeticExpression(new VariableExpression("v"), new ValueExpression(new IntValue(1)), 1)) // v + 1
+                                        )
+                                ),
+                                new CompoundStatement(
+                                        new SleepStatement(5),
+                                        new PrintStatement(new ArithmeticExpression(new VariableExpression("v"), new ValueExpression(new IntValue(10)), 3)) // v * 10
+                                )
+                        )
+                )
+        );
+    }
+
+    //Example 22: Sleep example 2
+    private static IStatement getSleepExample2(){
+        return new CompoundStatement(
+                new VariableDeclarationStatement(IntType.INSTANCE, "v"),
+                new CompoundStatement(
+                        new AssignmentStatement("v", new ValueExpression(new IntValue(10))),
+                        new CompoundStatement(
+                                new ForkStatement(
+                                        new CompoundStatement(
+                                                new AssignmentStatement("v", new ArithmeticExpression(new VariableExpression("v"), new ValueExpression(new IntValue(1)), 2)), // v - 1
+                                                new CompoundStatement(
+                                                        new AssignmentStatement("v", new ArithmeticExpression(new VariableExpression("v"), new ValueExpression(new IntValue(1)), 2)), // v - 1
+                                                        new PrintStatement(new VariableExpression("v"))
+                                                )
+                                        )
+                                ),
+                                new CompoundStatement(
+                                        new SleepStatement(10),
+                                        new PrintStatement(new ArithmeticExpression(new VariableExpression("v"), new ValueExpression(new IntValue(10)), 3)) // v * 10
+                                )
+                        )
+                )
+        );
+    }
+
+    //Example 23: Wait example
+    private static IStatement getWaitExample(){
+        return new CompoundStatement(
+                new VariableDeclarationStatement(IntType.INSTANCE, "v"),
+                new CompoundStatement(
+                        new AssignmentStatement("v", new ValueExpression(new IntValue(20))),
+                        new CompoundStatement(
+                                new WaitStatement(10),
+                                new PrintStatement(
+                                        new ArithmeticExpression(
+                                                new VariableExpression("v"),
+                                                new ValueExpression(new IntValue(10)),
+                                                3 // 3 is multiplication '*'
                                         )
                                 )
                         )
