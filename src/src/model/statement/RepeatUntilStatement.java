@@ -11,8 +11,6 @@ public record RepeatUntilStatement(IStatement statement, IExpression expression)
 
     @Override
     public ProgramState execute(ProgramState state) {
-        // Transform: repeat stmt until exp
-        // Into: stmt; while(!exp) stmt
 
         IStatement converted = new CompoundStatement(
                 statement,

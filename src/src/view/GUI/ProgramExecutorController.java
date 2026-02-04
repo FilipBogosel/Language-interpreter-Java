@@ -165,20 +165,17 @@ public class ProgramExecutorController {
                 return;
             }
 
-            // Update output before filtering to ensure it's captured even if all programs complete
-            List<String> output = programStates.getFirst().outputList().getContent().stream()
+            // Capture the program state reference before execution, so we can update the ui(out) later
+            ProgramState programState = programStates.getFirst();
+            controller.oneStepForGUI();
+            List<String> output = programState.outputList().getContent().stream()
                     .map(IValue::toString)
                     .collect(Collectors.toList());
             outputListView.setItems(FXCollections.observableArrayList(output));
+            outputListView.refresh();
+            populate();
 
-            List<ProgramState> activeProgramStates = programStates.stream()
-                    .filter(ProgramState::isNotCompleted)
-                    .toList();
-
-            if (!activeProgramStates.isEmpty()) {
-                controller.oneStepForGUI();
-                populate();
-            } else {
+            if (controller.getAllProgramStates().isEmpty()) {
                 Utils.showAlert("Info", "Program finished");
             }
 
@@ -187,6 +184,7 @@ public class ProgramExecutorController {
             e.printStackTrace();
         }
     }
+
 
 
 

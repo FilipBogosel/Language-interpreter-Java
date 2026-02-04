@@ -169,6 +169,9 @@ public class Controller implements IController {
 
             commonHeapTable.setContent(garbageCollectedHeap);
             oneStepForAllPrograms(activeProgramStates);
+
+            List<ProgramState> remainingActive = removeCompletedProgramStates(repository.getAllProgramStates());
+            repository.setProgramStates(remainingActive);
         }
 
         executor.shutdownNow();
